@@ -5,8 +5,8 @@ model = fasttext.load_model("name_non_name_model.bin")
 
 # Define a list of words to test
 test_words = [
-    "Robert",   # Example of a name
-    "chair",    # Example of a non-name
+    "robert",   # Example of a name
+    "Chair",    # Example of a non-name
     "John",     # Example of a name
     "furniture" # Example of a non-name
 ]
