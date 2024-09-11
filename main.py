@@ -1,7 +1,7 @@
 import fasttext
 
 # Path to the training data
-training_data_path = 'labeled_name_data.txt'
+training_data_path = 'output.txt'
 
 # Train the FastText model
 model = fasttext.train_supervised(input=training_data_path, epoch=25, lr=1.0, wordNgrams=2, verbose=2, minCount=1)
