@@ -111,7 +111,7 @@ class Config:
     CASIA1 = os.path.abspath("./data/input/casia-dataset/CASIA1")
     CASIA2 = os.path.abspath("./data/input/casia-dataset/CASIA2")
     autotune = tf.data.experimental.AUTOTUNE
-    epochs = 10
+    epochs = 2
     batch_size = 32
     lr = 1e-3
     name = 'xception'
@@ -431,7 +431,7 @@ model.summary()
 from keras import optimizers
 model.compile(loss='categorical_crossentropy', optimizer='Nadam', metrics=['accuracy'])
 
-epochs = 10
+epochs = 2
 batch_size = 32
 
 from keras.models import Sequential
@@ -499,14 +499,14 @@ hist = model.fit(X_train,
 model.save('model_casia_run1.h5')
 
 # Plot the loss and accuracy curves for training and validation
-fig, ax = plt.subplots(2,1)
-ax[0].plot(history.history['loss'], color='b', label="Training loss")
-ax[0].plot(history.history['val_loss'], color='r', label="validation loss",axes =ax[0])
-legend = ax[0].legend(loc='best', shadow=True)
+# fig, ax = plt.subplots(2,1)
+# ax[0].plot(history.history['loss'], color='b', label="Training loss")
+# ax[0].plot(history.history['val_loss'], color='r', label="validation loss",axes =ax[0])
+# legend = ax[0].legend(loc='best', shadow=True)
 
-ax[1].plot(history.history['accuracy'], color='b', label="Training accuracy")
-ax[1].plot(history.history['val_accuracy'], color='r',label="Validation accuracy")
-legend = ax[1].legend(loc='best', shadow=True)
+# ax[1].plot(history.history['accuracy'], color='b', label="Training accuracy")
+# ax[1].plot(history.history['val_accuracy'], color='r',label="Validation accuracy")
+# legend = ax[1].legend(loc='best', shadow=True)
 
 def plot_confusion_matrix(cm, classes,
                           normalize=False,
@@ -545,9 +545,9 @@ Y_pred_classes = np.argmax(Y_pred,axis = 1)
 # Convert validation observations to one hot vectors
 Y_true = np.argmax(Y_val,axis = 1)
 # compute the confusion matrix
-confusion_mtx = confusion_matrix(Y_true, Y_pred_classes)
+# confusion_mtx = confusion_matrix(Y_true, Y_pred_classes)
 # plot the confusion matrix
-plot_confusion_matrix(confusion_mtx, classes = range(2))
+# plot_confusion_matrix(confusion_mtx, classes = range(2))
 
 class_names = ['fake', 'real']
 
