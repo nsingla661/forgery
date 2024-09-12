@@ -111,7 +111,7 @@ class Config:
     CASIA1 = os.path.abspath("./data/input/casia-dataset/CASIA1")
     CASIA2 = os.path.abspath("./data/input/casia-dataset/CASIA2")
     autotune = tf.data.experimental.AUTOTUNE
-    epochs = 2
+    epochs = 30
     batch_size = 32
     lr = 1e-3
     name = 'xception'
@@ -382,8 +382,9 @@ for dirname, _, filenames in os.walk(path):
                 print(f'Processing {len(Y)} images')
 
 random.shuffle(X)
-X = X[:2100]
-Y = Y[:2100]
+# X = X[:2100]
+# Y = Y[:2100]
+print("length of Authentic images used ")
 print(len(X), len(Y))
 
 path = CASIA2/'Tp/'
@@ -396,6 +397,7 @@ for dirname, _, filenames in os.walk(path):
             if len(Y) % 500 == 0:
                 print(f'Processing {len(Y)} images')
 
+print("length of authentic + tempered images")
 print(len(X), len(Y))
 
 import numpy as np
@@ -407,10 +409,12 @@ from sklearn.model_selection import train_test_split
 
 # Assuming X and Y are already defined
 
-X_train, X_val, Y_train, Y_val = train_test_split(X, Y, test_size=0.2, random_state=5)
+X_train, X_val, Y_train, Y_val = train_test_split(X, Y, test_size=0.2, random_state=42)
 X = X.reshape(-1, 1, 1, 1)
 
+print("training data set : ")
 print(len(X_train), len(Y_train))
+print("print validation data set : ")
 print(len(X_val), len(Y_val))
 
 def build_model():
@@ -431,7 +435,7 @@ model.summary()
 from keras import optimizers
 model.compile(loss='categorical_crossentropy', optimizer='Nadam', metrics=['accuracy'])
 
-epochs = 2
+epochs = 24
 batch_size = 32
 
 from keras.models import Sequential
@@ -624,45 +628,45 @@ y_pred = model.predict(image)
 y_pred_class = np.argmax(y_pred, axis = 1)[0]
 print(f'Class: {class_names[y_pred_class]} Confidence: {np.amax(y_pred) * 100:0.2f}')
 
-convert_to_ela_image(image_path1, 91)
+# convert_to_ela_image(image_path1, 91)
 
-image_1_ELA=convert_to_ela_image(image_path1, 91)
+# image_1_ELA=convert_to_ela_image(image_path1, 91)
 
-convert_to_ela_image(image_path2, 91)
+# convert_to_ela_image(image_path2, 91)
 
-image_2_ELA=convert_to_ela_image(image_path2, 91)
+# image_2_ELA=convert_to_ela_image(image_path2, 91)
 
-ela_image = ImageChops.difference(image_1_ELA, image_2_ELA)
+# ela_image = ImageChops.difference(image_1_ELA, image_2_ELA)
 
-ela_image
+# ela_image
 
-print(y_pred_class)
+# print(y_pred_class)
 
-def find_manipulated_region(ela, threshold=50):
-    mask = np.array(ela) > threshold
+# def find_manipulated_region(ela, threshold=50):
+#     mask = np.array(ela) > threshold
 
-    # Find the bounding box of the masked region
-    if np.any(mask):
-        coords = np.argwhere(mask)
-        return coords
-    else:
-        return None
+#     # Find the bounding box of the masked region
+#     if np.any(mask):
+#         coords = np.argwhere(mask)
+#         return coords
+#     else:
+#         return None
 
-def make_pixels_white(img, white_coords):
-    width, height = img.size
-    black_img = Image.new('RGB', (width, height), color='black')
-    img_arr = np.array(img)
-    black_arr = np.array(black_img)
-    for coord in white_coords:
-        x, y, z = coord
-        black_arr[x,y,:] = [255,255,255]
-    mask = np.all(black_arr == [255,255,255], axis=-1)
-    img_arr[mask] = [255,255,255]
-    new_img = Image.fromarray(img_arr)
-    return new_img
+# def make_pixels_white(img, white_coords):
+#     width, height = img.size
+#     black_img = Image.new('RGB', (width, height), color='black')
+#     img_arr = np.array(img)
+#     black_arr = np.array(black_img)
+#     for coord in white_coords:
+#         x, y, z = coord
+#         black_arr[x,y,:] = [255,255,255]
+#     mask = np.all(black_arr == [255,255,255], axis=-1)
+#     img_arr[mask] = [255,255,255]
+#     new_img = Image.fromarray(img_arr)
+#     return new_img
 
-if y_pred_class==0:
-    ela=convert_to_ela_image(image_path2,91)
-    coords=find_manipulated_region(ela)
-    modify_boundary=make_pixels_white(ela,coords)
-    modify_boundary.show()
+# if y_pred_class==0:
+#     ela=convert_to_ela_image(image_path2,91)
+#     coords=find_manipulated_region(ela)
+#     modify_boundary=make_pixels_white(ela,coords)
+#     modify_boundary.show()
