@@ -256,26 +256,26 @@ psnr_bayes
 psnr_visu = cv2.PSNR(img_r,img_visushrink)
 psnr_visu
 
-# Plotting images
-plt.figure(figsize=(30,30))
+# # Plotting images
+# plt.figure(figsize=(30,30))
 
-plt.subplot(2,2,1)
-plt.imshow(img_r1,cmap=plt.cm.gray)
-plt.title('Original Image',fontsize=30)
+# plt.subplot(2,2,1)
+# plt.imshow(img_r1,cmap=plt.cm.gray)
+# plt.title('Original Image',fontsize=30)
 
-plt.subplot(2,2,2)
-plt.imshow(img_r,cmap=plt.cm.gray)
-plt.title('Noisy Image',fontsize=30)
+# plt.subplot(2,2,2)
+# plt.imshow(img_r,cmap=plt.cm.gray)
+# plt.title('Noisy Image',fontsize=30)
 
-plt.subplot(2,2,3)
-plt.imshow(img_bayes,cmap=plt.cm.gray)
-plt.title('Denoising using Bayes',fontsize=30)
+# plt.subplot(2,2,3)
+# plt.imshow(img_bayes,cmap=plt.cm.gray)
+# plt.title('Denoising using Bayes',fontsize=30)
 
-plt.subplot(2,2,4)
-plt.imshow(img_visushrink,cmap=plt.cm.gray)
-plt.title('Denoising using Visushrink',fontsize=30)
+# plt.subplot(2,2,4)
+# plt.imshow(img_visushrink,cmap=plt.cm.gray)
+# plt.title('Denoising using Visushrink',fontsize=30)
 
-plt.show()
+# plt.show()
 
 print('PSNR[Original vs. Noisy Image]', psnr_noisy)
 print('PSNR[Original vs. Denoised(VisuShrink)]', psnr_visu)
@@ -314,25 +314,25 @@ psnr_visu = cv2.PSNR(img_f,img_visushrink)
 psnr_visu
 
 # Plotting images
-plt.figure(figsize=(30,30))
+# plt.figure(figsize=(30,30))
 
-plt.subplot(2,2,1)
-plt.imshow(img_f,cmap=plt.cm.gray)
-plt.title('Original Image',fontsize=30)
+# plt.subplot(2,2,1)
+# plt.imshow(img_f,cmap=plt.cm.gray)
+# plt.title('Original Image',fontsize=30)
 
-plt.subplot(2,2,2)
-plt.imshow(img_f,cmap=plt.cm.gray)
-plt.title('Noisy Image',fontsize=30)
+# plt.subplot(2,2,2)
+# plt.imshow(img_f,cmap=plt.cm.gray)
+# plt.title('Noisy Image',fontsize=30)
 
-plt.subplot(2,2,3)
-plt.imshow(img_bayes,cmap=plt.cm.gray)
-plt.title('Original Image',fontsize=30)
+# plt.subplot(2,2,3)
+# plt.imshow(img_bayes,cmap=plt.cm.gray)
+# plt.title('Original Image',fontsize=30)
 
-plt.subplot(2,2,4)
-plt.imshow(img_visushrink,cmap=plt.cm.gray)
-plt.title('Original Image',fontsize=30)
+# plt.subplot(2,2,4)
+# plt.imshow(img_visushrink,cmap=plt.cm.gray)
+# plt.title('Original Image',fontsize=30)
 
-plt.show()
+# plt.show()
 
 print('PSNR[Original vs. Noisy Image]', psnr_noisy)
 print('PSNR[Original vs. Denoised(VisuShrink)]', psnr_visu)
@@ -374,7 +374,7 @@ import numpy as np
 path = CASIA2/'Au/'
 for dirname, _, filenames in os.walk(path):
     for filename in filenames:
-        if filename.endswith('jpg') or filename.endswith('png'):
+        if filename.endswith('jpg') or filename.endswith('png') or filename.endswith('tif'):
             full_path = os.path.join(dirname, filename)
             X.append(prepare_image(full_path))
             Y.append(1)
@@ -390,7 +390,7 @@ print(len(X), len(Y))
 path = CASIA2/'Tp/'
 for dirname, _, filenames in os.walk(path):
     for filename in filenames:
-        if filename.endswith('jpg') or filename.endswith('png'):
+        if filename.endswith('jpg') or filename.endswith('png') or filename.endswith('tif'):
             full_path = os.path.join(dirname, filename)
             X.append(prepare_image(full_path))
             Y.append(0)
