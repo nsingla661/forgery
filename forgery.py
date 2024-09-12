@@ -111,7 +111,7 @@ class Config:
     CASIA1 = os.path.abspath("./data/input/casia-dataset/CASIA1")
     CASIA2 = os.path.abspath("./data/input/casia-dataset/CASIA2")
     autotune = tf.data.experimental.AUTOTUNE
-    epochs = 30
+    epochs = 10
     batch_size = 32
     lr = 1e-3
     name = 'xception'
@@ -431,7 +431,7 @@ model.summary()
 from keras import optimizers
 model.compile(loss='categorical_crossentropy', optimizer='Nadam', metrics=['accuracy'])
 
-epochs = 24
+epochs = 10
 batch_size = 32
 
 from keras.models import Sequential
@@ -586,7 +586,7 @@ for file_name in fake_image:
 
 print(f'Total: {total}, Correct: {correct}, Acc: {correct / total * 100.0}')
 
-real_image = os.listdir('../input/casia-dataset/CASIA2/Au/')
+real_image =  os.listdir(CASIA2 / 'Au')
 correct_r = 0
 total_r = 0
 for file_name in real_image:
@@ -605,7 +605,8 @@ total += total_r
 print(f'Total: {total_r}, Correct: {correct_r}, Acc: {correct_r / total_r * 100.0}')
 print(f'Total: {total}, Correct: {correct}, Acc: {correct / total * 100.0}')
 
-image_path1 = '/kaggle/input/casia-dataset/CASIA1/Au/Au_ani_0028.jpg'
+CASIA1 = Path("data/input/casia-dataset/CASIA1")
+image_path1 = CASIA1 / 'Au/Au_ani_0028.jpg'
 Image.open(image_path1)
 
 image = prepare_image(image_path1)
@@ -614,7 +615,7 @@ y_pred = model.predict(image)
 y_pred_class = np.argmax(y_pred, axis = 1)[0]
 print(f'Class: {class_names[y_pred_class]} Confidence: {np.amax(y_pred) * 100:0.2f}')
 
-image_path2 = '/kaggle/input/casia-dataset/CASIA1/Sp/Sp_D_NNN_A_ani0028_pla0007_0284.jpg'
+image_path2 = CASIA1 / 'Sp/Sp_D_NNN_A_ani0028_pla0007_0284.jpg'
 Image.open(image_path2)
 
 image = prepare_image(image_path2)
