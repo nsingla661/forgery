@@ -2,11 +2,11 @@ import os
 import shutil
 from urllib.parse import unquote, urlparse
 from urllib.request import urlopen
-from urllib.error import HTTPError  # Import this
+from urllib.error import HTTPError
 from zipfile import ZipFile
 import tarfile
 import sys
-from tempfile import NamedTemporaryFile  # Import this
+from tempfile import NamedTemporaryFile
 
 CHUNK_SIZE = 40960
 DATA_SOURCE_MAPPING = 'casia-dataset:https%3A%2F%2Fstorage.googleapis.com%2Fkaggle-data-sets%2F59500%2F115146%2Fbundle%2Farchive.zip%3FX-Goog-Algorithm%3DGOOG4-RSA-SHA256%26X-Goog-Credential%3Dgcp-kaggle-com%2540kaggle-161607.iam.gserviceaccount.com%252F20240911%252Fauto%252Fstorage%252Fgoog4_request%26X-Goog-Date%3D20240911T104634Z%26X-Goog-Expires%3D259200%26X-Goog-SignedHeaders%3Dhost%26X-Goog-Signature%3D67a5d0b3c194195cbd4639829f8330d73edb79354f6876f49ae86c3103d0a4a3e141cbe4f04d7d08419e9f4f7efd5d0b30e6583c7b85282878ab4fc429b5fd6f81e39a4b002ef66d1f7f514078d3fed8cb20ef39bcb4143492b3ca683a5f008923ff2ffe2e2ab887b0532196b6f313dca996fe4d487e8be2ec4ce1b4b2d528a2c2284d198192e08e2e77f7210a4536b25aa5766774eeca238d1f6866acff418c63b54301a61cea59df6f94614bbb65da2f41dea385576d3cae6dbf63267de0e5660d54f8a762ff33c474a0c8aac842a4b778ffb9ac27725050fb9ed3203f20c899afddba265a4528dbcf41d7f51c5d97da7e5bfeb21d0c7b29174a96c30c0d0e'
@@ -26,39 +26,45 @@ for data_source_mapping in DATA_SOURCE_MAPPING.split(','):
     filename = urlparse(download_url).path
     destination_path = os.path.join(TMP_INPUT_PATH, directory)
     
-    try:
-        with urlopen(download_url) as fileres, NamedTemporaryFile() as tfile:
-            total_length = fileres.headers.get('content-length')
-            print(f'Downloading {directory}, {total_length} bytes compressed')
-            
-            dl = 0
-            data = fileres.read(CHUNK_SIZE)
-            while data:
-                dl += len(data)
-                tfile.write(data)
-                done = int(50 * dl / int(total_length))
-                sys.stdout.write(f"\r[{'=' * done}{' ' * (50 - done)}] {dl} bytes downloaded")
-                sys.stdout.flush()
-                data = fileres.read(CHUNK_SIZE)
+    # Check if the dataset already exists
+    if not os.path.exists(destination_path):
+        os.makedirs(destination_path, exist_ok=True)
+        try:
+            with urlopen(download_url) as fileres, NamedTemporaryFile() as tfile:
+                total_length = fileres.headers.get('content-length')
+                print(f'Downloading {directory}, {total_length} bytes compressed')
                 
-            # Uncompress file
-            if filename.endswith('.zip'):
-                with ZipFile(tfile) as zfile:
-                    zfile.extractall(destination_path)
-            else:
-                with tarfile.open(tfile.name) as tarfile:
-                    tarfile.extractall(destination_path)
+                dl = 0
+                data = fileres.read(CHUNK_SIZE)
+                while data:
+                    dl += len(data)
+                    tfile.write(data)
+                    done = int(50 * dl / int(total_length))
+                    sys.stdout.write(f"\r[{'=' * done}{' ' * (50 - done)}] {dl} bytes downloaded")
+                    sys.stdout.flush()
+                    data = fileres.read(CHUNK_SIZE)
                     
-            print(f'\nDownloaded and uncompressed: {directory}')
-    
-    except HTTPError as e:
-        print(f'Failed to load (likely expired) {download_url} to path {destination_path}')
-        continue
-    except OSError as e:
-        print(f'Failed to load {download_url} to path {destination_path}')
-        continue
+                # Uncompress file
+                if filename.endswith('.zip'):
+                    with ZipFile(tfile) as zfile:
+                        zfile.extractall(destination_path)
+                else:
+                    with tarfile.open(tfile.name) as tarfile:
+                        tarfile.extractall(destination_path)
+                        
+                print(f'\nDownloaded and uncompressed: {directory}')
+        
+        except HTTPError as e:
+            print(f'Failed to load (likely expired) {download_url} to path {destination_path}')
+            continue
+        except OSError as e:
+            print(f'Failed to load {download_url} to path {destination_path}')
+            continue
+    else:
+        print(f'{directory} already exists. Skipping download.')
 
 print('Data source import complete.')
+
 
 
 """import numpy as np
