@@ -10,12 +10,10 @@ from tempfile import NamedTemporaryFile
 
 CHUNK_SIZE = 40960
 DATA_SOURCE_MAPPING = 'casia-dataset:https%3A%2F%2Fstorage.googleapis.com%2Fkaggle-data-sets%2F59500%2F115146%2Fbundle%2Farchive.zip%3FX-Goog-Algorithm%3DGOOG4-RSA-SHA256%26X-Goog-Credential%3Dgcp-kaggle-com%2540kaggle-161607.iam.gserviceaccount.com%252F20240911%252Fauto%252Fstorage%252Fgoog4_request%26X-Goog-Date%3D20240911T104634Z%26X-Goog-Expires%3D259200%26X-Goog-SignedHeaders%3Dhost%26X-Goog-Signature%3D67a5d0b3c194195cbd4639829f8330d73edb79354f6876f49ae86c3103d0a4a3e141cbe4f04d7d08419e9f4f7efd5d0b30e6583c7b85282878ab4fc429b5fd6f81e39a4b002ef66d1f7f514078d3fed8cb20ef39bcb4143492b3ca683a5f008923ff2ffe2e2ab887b0532196b6f313dca996fe4d487e8be2ec4ce1b4b2d528a2c2284d198192e08e2e77f7210a4536b25aa5766774eeca238d1f6866acff418c63b54301a61cea59df6f94614bbb65da2f41dea385576d3cae6dbf63267de0e5660d54f8a762ff33c474a0c8aac842a4b778ffb9ac27725050fb9ed3203f20c899afddba265a4528dbcf41d7f51c5d97da7e5bfeb21d0c7b29174a96c30c0d0e'
+TMP_INPUT_PATH = './data/input'
+TMP_WORKING_PATH = './data/working'
 
-TMP_INPUT_PATH='/tmp/kaggle/input'
-TMP_WORKING_PATH='/tmp/kaggle/working'
-
-# Clean up and make directories in temporary paths where writing is allowed
-shutil.rmtree(TMP_INPUT_PATH, ignore_errors=True)
+# Make directories in temporary paths where writing is allowed
 os.makedirs(TMP_INPUT_PATH, 0o777, exist_ok=True)
 os.makedirs(TMP_WORKING_PATH, 0o777, exist_ok=True)
 
@@ -30,7 +28,7 @@ for data_source_mapping in DATA_SOURCE_MAPPING.split(','):
     if not os.path.exists(destination_path):
         os.makedirs(destination_path, exist_ok=True)
         try:
-            with urlopen(download_url) as fileres, NamedTemporaryFile() as tfile:
+            with urlopen(download_url) as fileres, NamedTemporaryFile(delete=False) as tfile:
                 total_length = fileres.headers.get('content-length')
                 print(f'Downloading {directory}, {total_length} bytes compressed')
                 
@@ -46,7 +44,7 @@ for data_source_mapping in DATA_SOURCE_MAPPING.split(','):
                     
                 # Uncompress file
                 if filename.endswith('.zip'):
-                    with ZipFile(tfile) as zfile:
+                    with ZipFile(tfile.name) as zfile:
                         zfile.extractall(destination_path)
                 else:
                     with tarfile.open(tfile.name) as tarfile:
@@ -64,7 +62,6 @@ for data_source_mapping in DATA_SOURCE_MAPPING.split(','):
         print(f'{directory} already exists. Skipping download.')
 
 print('Data source import complete.')
-
 
 
 """import numpy as np
@@ -111,8 +108,8 @@ def convert_to_ela_image(path, quality):
 
 import tensorflow as tf
 class Config:
-    CASIA1 = "../input/casia-dataset/CASIA1"
-    CASIA2 = "../input/casia-dataset/CASIA2"
+    CASIA1 = os.path.abspath("./data/input/casia-dataset/CASIA1")
+    CASIA2 = os.path.abspath("./data/input/casia-dataset/CASIA2")
     autotune = tf.data.experimental.AUTOTUNE
     epochs = 30
     batch_size = 32
@@ -124,6 +121,19 @@ class Config:
     momentum = 0.95
     nesterov = False
 
+from pathlib import Path
+
+# Print the absolute path for verification
+path_to_check = Path(os.path.abspath("./data/input/casia-dataset/CASIA2"))
+print(f"Checking directory: {path_to_check}")
+if path_to_check.exists() and path_to_check.is_dir():
+    print("Directory exists.")
+    print("Contents:", list(path_to_check.glob('*')))
+else:
+    print("Directory does not exist.")
+
+
+
 def compute_ela_cv(path, quality):
     temp_filename = 'temp_file_name.jpg'
     SCALE = 15
@@ -132,20 +142,19 @@ def compute_ela_cv(path, quality):
 
     cv2.imwrite(temp_filename, orig_img, [cv2.IMWRITE_JPEG_QUALITY, quality])
 
-    # read compressed image
     compressed_img = cv2.imread(temp_filename)
 
-    # get absolute difference between img1 and img2 and multiply by scale
     diff = SCALE * cv2.absdiff(orig_img, compressed_img)
     return diff
 
 def random_sample(path, extension=None):
     if extension:
-        items = Path(path).glob(f'*.{extension}')
+        items = list(Path(path).glob(f'*.{extension}'))
     else:
-        items = Path(path).glob(f'*')
+        items = list(Path(path).glob('*'))
 
-    items = list(items)
+    if not items:
+        raise ValueError(f"No files found in {path} with extension {extension}")
 
     p = random.choice(items)
     return p.as_posix()
@@ -183,10 +192,13 @@ plt.show()
 
 """# Test on a tampered fake image"""
 
-p = join(Config.CASIA2, 'Tp/')
-p = random_sample(p)
-orig = cv2.imread(p)
-orig = cv2.cvtColor(orig, cv2.COLOR_BGR2RGB) / 255.0
+try:
+    p = join(Config.CASIA2, 'Tp/')
+    p = random_sample(p)
+    orig = cv2.imread(p)
+    orig = cv2.cvtColor(orig, cv2.COLOR_BGR2RGB) / 255.0
+except ValueError as e:
+    print(e)
 init_val = 100
 columns = 3
 rows = 3
@@ -202,12 +214,14 @@ for i in range(1, columns*rows +1):
     plt.imshow(img)
 plt.show()
 
-real_image_path = '../input/casia-dataset/CASIA2/Au/Au_ani_00001.jpg'
+CASIA2 = Path("data/input/casia-dataset/CASIA2")
+
+real_image_path = CASIA2/"Au/Au_ani_00001.jpg"
 Image.open(real_image_path)
 
 convert_to_ela_image(real_image_path, 91)
 
-fake_image_path = '../input/casia-dataset/CASIA2/Tp/Tp_D_NRN_S_N_ani10171_ani00001_12458.jpg'
+fake_image_path = CASIA2/'Tp/Tp_D_NRN_S_N_ani10171_ani00001_12458.jpg'
 Image.open(fake_image_path)
 
 convert_to_ela_image(fake_image_path, 91)
@@ -219,7 +233,7 @@ from skimage.restoration import denoise_wavelet, estimate_sigma
 from skimage.util import random_noise
 import skimage.io
 
-img_r1 = skimage.io.imread('../input/casia-dataset/CASIA2/Au/Au_ani_00001.jpg')
+img_r1 = skimage.io.imread(CASIA2/'Au/Au_ani_00001.jpg')
 img_r = skimage.img_as_float(img_r1)  # Converting image as float
 
 sigma_est = estimate_sigma(img_r, channel_axis=-1, average_sigmas=True)  # Noise estimation
@@ -273,7 +287,7 @@ from skimage.restoration import denoise_wavelet, estimate_sigma
 from skimage.util import random_noise
 import skimage.io
 
-img_f = skimage.io.imread('../input/casia-dataset/CASIA2/Tp/Tp_D_NRN_S_N_ani10171_ani00001_12458.jpg')
+img_f = skimage.io.imread(CASIA2/'Tp/Tp_D_NRN_S_N_ani10171_ani00001_12458.jpg')
 img_f = skimage.img_as_float(img_f)  # Converting image as float
 
 sigma = 0.35  # Noise
@@ -357,7 +371,7 @@ Y = [] # 0 for fake, 1 for real
 
 import random
 import numpy as np
-path = '../input/casia-dataset/CASIA2/Au/'
+path = CASIA2/'Au/'
 for dirname, _, filenames in os.walk(path):
     for filename in filenames:
         if filename.endswith('jpg') or filename.endswith('png'):
@@ -372,7 +386,7 @@ X = X[:2100]
 Y = Y[:2100]
 print(len(X), len(Y))
 
-path = '../input/casia-dataset/CASIA2/Tp/'
+path = CASIA2/'Tp/'
 for dirname, _, filenames in os.walk(path):
     for filename in filenames:
         if filename.endswith('jpg') or filename.endswith('png'):
@@ -537,7 +551,7 @@ plot_confusion_matrix(confusion_mtx, classes = range(2))
 
 class_names = ['fake', 'real']
 
-real_image_path = '../input/casia-dataset/CASIA2/Au/Au_ani_00040.jpg'
+real_image_path = CASIA2/'Au/Au_ani_00040.jpg'
 Image.open(real_image_path)
 
 image = prepare_image(real_image_path)
@@ -546,7 +560,7 @@ y_pred = model.predict(image)
 y_pred_class = np.argmax(y_pred, axis = 1)[0]
 print(f'Class: {class_names[y_pred_class]} Confidence: {np.amax(y_pred) * 100:0.2f}')
 
-fake_image_path = '/kaggle/input/casia-dataset/CASIA2/Tp/Tp_D_NRD_S_N_ani00041_ani00040_00161.tif'
+fake_image_path = CASIA2 / 'Tp' / 'Tp_D_NRD_S_N_ani00041_ani00040_00161.tif'
 Image.open(fake_image_path)
 
 image = prepare_image(fake_image_path)
@@ -555,12 +569,13 @@ y_pred = model.predict(image)
 y_pred_class = np.argmax(y_pred, axis = 1)[0]
 print(f'Class: {class_names[y_pred_class]} Confidence: {np.amax(y_pred) * 100:0.2f}')
 
-fake_image = os.listdir('../input/casia-dataset/CASIA2/Tp/')
+fake_image = os.listdir(CASIA2 / 'Tp')
+
 correct = 0
 total = 0
 for file_name in fake_image:
     if file_name.endswith('jpg') or filename.endswith('png'):
-        fake_image_path = os.path.join('../input/casia-dataset/CASIA2/Tp/', file_name)
+        fake_image_path = CASIA2 / 'Tp' / file_name
         image = prepare_image(fake_image_path)
         image = image.reshape(-1, 128, 128, 3)
         y_pred = model.predict(image)
@@ -576,7 +591,7 @@ correct_r = 0
 total_r = 0
 for file_name in real_image:
     if file_name.endswith('jpg') or filename.endswith('png'):
-        real_image_path = os.path.join('../input/casia-dataset/CASIA2/Au/', file_name)
+        real_image_path = CASIA2 / 'Au' / file_name
         image = prepare_image(real_image_path)
         image = image.reshape(-1, 128, 128, 3)
         y_pred = model.predict(image)
