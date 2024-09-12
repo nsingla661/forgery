@@ -8,12 +8,13 @@ from PIL import Image
 model = load_model('model_casia_run1.h5')
 
 def prepare_image(image_path):
-    # Load and preprocess the image
-    image = Image.open(image_path).convert('RGB')
-    image = image.resize((128, 128))  # Resize to the same size used during training
-    image_array = np.array(image)
+    # Convert to ELA image and preprocess the same way as in training
+    ela_image = convert_to_ela_image(image_path, 91)
+    ela_image = ela_image.resize((128, 128))  # Resize to match training
+    image_array = np.array(ela_image)
     image_array = image_array / 255.0  # Normalize the image
     return image_array
+
 
 # Load and prepare the test image
 image_path = 'Drivers-Forged (3) copy.jpg'
