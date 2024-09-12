@@ -100,3 +100,18 @@ Y_pred_classes = np.argmax(Y_pred, axis=1)
 
 # Print the predicted class
 print(f'Predicted class for blank image: {Y_pred_classes[0]}')
+
+
+# Load and prepare the test image
+image_path = 'p_camera.jpeg'
+image = prepare_image(image_path)
+image = image.reshape(1, 128, 128, 3)  # Add batch dimension
+
+# Predict the values
+Y_pred = model.predict(image)
+
+# Convert predictions to class labels
+Y_pred_classes = np.argmax(Y_pred, axis=1)
+
+# Print the predicted class
+print(f'Predicted class for camera image: {Y_pred_classes[0]}')
