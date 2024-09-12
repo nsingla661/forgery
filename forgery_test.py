@@ -4,7 +4,7 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.utils import to_categorical
 from PIL import Image
 from PIL import Image, ImageChops, ImageEnhance
-
+import os
 # Load the pre-trained model
 model = load_model('model_casia_run1.h5')
 
