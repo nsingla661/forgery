@@ -62,3 +62,28 @@ predict_and_print('image (10).png')
 predict_and_print('s1.png')
 predict_and_print('s2.png')
 predict_and_print('p_camera.jpeg')
+
+
+def evaluate_model_on_known_authentic_images(model, image_paths):
+    for image_path in image_paths:
+        # Load and prepare the test image
+        image = prepare_image(image_path)
+        image = image.reshape(1, 128, 128, 3)  # Add batch dimension
+
+        # Predict the values
+        Y_pred = model.predict(image)
+
+        # Print the prediction probabilities
+        print(f'Prediction probabilities for {image_path}: {Y_pred}')
+
+        # Convert predictions to class labels
+        Y_pred_classes = np.argmax(Y_pred, axis=1)
+
+        # Print the predicted class
+        print(f'Predicted class for {image_path}: {Y_pred_classes[0]}')
+
+# Get the list of first 10 images in the 'Au' directory
+au_directory = 'data/input/casia-dataset/CASIA2/Au'
+authentic_image_paths = [os.path.join(au_directory, fname) for fname in os.listdir(au_directory)[:10]]
+
+evaluate_model_on_known_authentic_images(model, authentic_image_paths)
