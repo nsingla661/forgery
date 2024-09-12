@@ -27,6 +27,7 @@ def convert_to_ela_image(path, quality):
     ela_image = ImageEnhance.Brightness(ela_image).enhance(scale)
 
     return ela_image
+
 def prepare_image(image_path):
     # Convert to ELA image and preprocess the same way as in training
     ela_image = convert_to_ela_image(image_path, 91)
@@ -35,104 +36,29 @@ def prepare_image(image_path):
     image_array = image_array / 255.0  # Normalize the image
     return image_array
 
+# Function to predict and print the results
+def predict_and_print(image_path):
+    # Load and prepare the test image
+    image = prepare_image(image_path)
+    image = image.reshape(1, 128, 128, 3)  # Add batch dimension
 
-# Load and prepare the test image
-image_path = 'Drivers-Forged (3) copy.jpg'
-image = prepare_image(image_path)
-image = image.reshape(1, 128, 128, 3)  # Add batch dimension
+    # Predict the values
+    Y_pred = model.predict(image)
 
-# Predict the values
-Y_pred = model.predict(image)
+    # Print the prediction probabilities
+    print(f'Prediction probabilities for {image_path}: {Y_pred}')
 
-# Convert predictions to class labels
-Y_pred_classes = np.argmax(Y_pred, axis=1)
+    # Convert predictions to class labels
+    Y_pred_classes = np.argmax(Y_pred, axis=1)
 
-# Print the predicted class
-print(f'Predicted class: {Y_pred_classes[0]}')
+    # Print the predicted class
+    print(f'Predicted class for {image_path}: {Y_pred_classes[0]}')
 
-
-
-# Load and prepare the test image
-image_path = 'photo_2024-09-10 13.46.53.jpeg'
-image = prepare_image(image_path)
-image = image.reshape(1, 128, 128, 3)  # Add batch dimension
-
-# Predict the values
-Y_pred = model.predict(image)
-
-# Convert predictions to class labels
-Y_pred_classes = np.argmax(Y_pred, axis=1)
-
-# Print the predicted class
-print(f'Predicted class for flash on document: {Y_pred_classes[0]}')
-
-# Load and prepare the test image
-image_path = 'image (9).png'
-image = prepare_image(image_path)
-image = image.reshape(1, 128, 128, 3)  # Add batch dimension
-
-# Predict the values
-Y_pred = model.predict(image)
-
-# Convert predictions to class labels
-Y_pred_classes = np.argmax(Y_pred, axis=1)
-
-# Print the predicted class
-print(f'Predicted class for image 9 : {Y_pred_classes[0]}')
-
-# Load and prepare the test image
-image_path = 'image (10).png'
-image = prepare_image(image_path)
-image = image.reshape(1, 128, 128, 3)  # Add batch dimension
-
-# Predict the values
-Y_pred = model.predict(image)
-
-# Convert predictions to class labels
-Y_pred_classes = np.argmax(Y_pred, axis=1)
-
-# Print the predicted class
-print(f'Predicted class: {Y_pred_classes[0]}')
-
-# Load and prepare the test image
-image_path = 's1.png'
-image = prepare_image(image_path)
-image = image.reshape(1, 128, 128, 3)  # Add batch dimension
-
-# Predict the values
-Y_pred = model.predict(image)
-
-# Convert predictions to class labels
-Y_pred_classes = np.argmax(Y_pred, axis=1)
-
-# Print the predicted class
-print(f'Predicted class of slack: {Y_pred_classes[0]}')
-
-# Load and prepare the test image
-image_path = 's2.png'
-image = prepare_image(image_path)
-image = image.reshape(1, 128, 128, 3)  # Add batch dimension
-
-# Predict the values
-Y_pred = model.predict(image)
-
-# Convert predictions to class labels
-Y_pred_classes = np.argmax(Y_pred, axis=1)
-
-# Print the predicted class
-print(f'Predicted class for blank image: {Y_pred_classes[0]}')
-
-
-# Load and prepare the test image
-image_path = 'p_camera.jpeg'
-image = prepare_image(image_path)
-image = image.reshape(1, 128, 128, 3)  # Add batch dimension
-
-# Predict the values
-Y_pred = model.predict(image)
-
-# Convert predictions to class labels
-Y_pred_classes = np.argmax(Y_pred, axis=1)
-
-# Print the predicted class
-print(f'Predicted class for camera image: {Y_pred_classes[0]}')
+# Test the function on different images
+predict_and_print('Drivers-Forged (3) copy.jpg')
+predict_and_print('photo_2024-09-10 13.46.53.jpeg')
+predict_and_print('image (9).png')
+predict_and_print('image (10).png')
+predict_and_print('s1.png')
+predict_and_print('s2.png')
+predict_and_print('p_camera.jpeg')
