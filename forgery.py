@@ -404,8 +404,8 @@ for dirname, _, filenames in os.walk(path):
                         print(f'Processing {len(Y)} images')
 
 random.shuffle(X)
-X = X[:5000]
-Y = Y[:5000]
+X = X[:4000]
+Y = Y[:4000]
 print("length of Authentic images used ")
 print(len(X), len(Y))
 
@@ -435,7 +435,6 @@ from sklearn.model_selection import train_test_split
 # Assuming X and Y are already defined
 
 X_train, X_val, Y_train, Y_val = train_test_split(X, Y, test_size=0.2, random_state=42)
-X = X.reshape(-1, 1, 1, 1)
 
 print("training data set : ")
 print(len(X_train), len(Y_train))
