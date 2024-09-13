@@ -83,9 +83,6 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import EarlyStopping
 
 from PIL import Image, ImageChops, ImageEnhance
-import os
-import itertools
-
 def convert_to_ela_image(path, quality):
     try:
         temp_filename = 'temp_file_name.jpg'
@@ -140,86 +137,12 @@ else:
     print("Directory does not exist.")
 
 
-
-def compute_ela_cv(path, quality):
-    temp_filename = 'temp_file_name.jpg'
-    SCALE = 15
-    orig_img = cv2.imread(path)
-    orig_img = cv2.cvtColor(orig_img, cv2.COLOR_BGR2RGB)
-
-    cv2.imwrite(temp_filename, orig_img, [cv2.IMWRITE_JPEG_QUALITY, quality])
-
-    compressed_img = cv2.imread(temp_filename)
-
-    diff = SCALE * cv2.absdiff(orig_img, compressed_img)
-    return diff
-
-def random_sample(path, extension=None):
-    if extension:
-        items = list(Path(path).glob(f'*.{extension}'))
-    else:
-        items = list(Path(path).glob('*'))
-
-    if not items:
-        raise ValueError(f"No files found in {path} with extension {extension}")
-
-    p = random.choice(items)
-    return p.as_posix()
-
 """# Test on a Authentic image"""
-
 import cv2
 from os.path import join
 from pathlib import Path
 import random
 import matplotlib.pyplot as plt  # Importing matplotlib.pyplot
-
-# Assuming Config.CASIA2 and random_sample() are defined elsewhere in your code
-
-# Your existing code continues from here
-p = join(Config.CASIA2, 'Au/')
-p = random_sample(p)
-orig = cv2.imread(p)
-orig = cv2.cvtColor(orig, cv2.COLOR_BGR2RGB) / 255.0
-init_val = 100
-columns = 3
-rows = 3
-
-fig = plt.figure(figsize=(15, 10))
-for i in range(1, columns * rows + 1):
-    quality = init_val - (i - 1) * 3
-    # Assuming compute_ela_cv is defined elsewhere in your code
-    img = compute_ela_cv(path=p, quality=quality)
-    if i == 1:
-        img = orig.copy()
-    ax = fig.add_subplot(rows, columns, i)
-    ax.title.set_text(f'q: {quality}')
-    plt.imshow(img)
-plt.show()
-
-"""# Test on a tampered fake image"""
-
-try:
-    p = join(Config.CASIA2, 'Tp/')
-    p = random_sample(p)
-    orig = cv2.imread(p)
-    orig = cv2.cvtColor(orig, cv2.COLOR_BGR2RGB) / 255.0
-except ValueError as e:
-    print(e)
-init_val = 100
-columns = 3
-rows = 3
-
-fig=plt.figure(figsize=(15, 10))
-for i in range(1, columns*rows +1):
-    quality=init_val - (i-1) * 3
-    img = compute_ela_cv(path=p, quality=quality)
-    if i == 1:
-        img = orig.copy()
-    ax = fig.add_subplot(rows, columns, i)
-    ax.title.set_text(f'q: {quality}')
-    plt.imshow(img)
-plt.show()
 
 CASIA2 = Path("data/input/casia-dataset/CASIA2")
 
@@ -259,8 +182,8 @@ for dirname, _, filenames in os.walk(path):
                         print(f'Processing {len(Y)} images')
 
 random.shuffle(X)
-X = X[:4100]
-Y = Y[:4100]
+X = X[:5000]
+Y = Y[:5000]
 print("length of Authentic images used ")
 print(len(X), len(Y))
 
@@ -301,7 +224,7 @@ def build_model():
     model.add(Conv2D(filters = 32, kernel_size = (5, 5), padding = 'valid', activation = 'relu', input_shape = (128, 128, 3)))
     model.add(Conv2D(filters = 32, kernel_size = (5, 5), padding = 'valid', activation = 'relu', input_shape = (128, 128, 3)))
     model.add(MaxPool2D(pool_size = (2, 2)))
-    model.add(Dropout(0.3))
+    model.add(Dropout(0.25))
     model.add(Flatten())
     model.add(Dense(256, activation = 'relu'))
     model.add(Dropout(0.5))
@@ -382,172 +305,3 @@ hist = model.fit(X_train,
 
 print("starting to save the model")
 model.save('model_casia_run2.h5')
-
-# Plot the loss and accuracy curves for training and validation
-# fig, ax = plt.subplots(2,1)
-# ax[0].plot(history.history['loss'], color='b', label="Training loss")
-# ax[0].plot(history.history['val_loss'], color='r', label="validation loss",axes =ax[0])
-# legend = ax[0].legend(loc='best', shadow=True)
-
-# ax[1].plot(history.history['accuracy'], color='b', label="Training accuracy")
-# ax[1].plot(history.history['val_accuracy'], color='r',label="Validation accuracy")
-# legend = ax[1].legend(loc='best', shadow=True)
-
-# def plot_confusion_matrix(cm, classes,
-#                           normalize=False,
-#                           title='Confusion matrix',
-#                           cmap=plt.cm.Blues):
-#     """
-#     This function prints and plots the confusion matrix.
-#     Normalization can be applied by setting `normalize=True`.
-#     """
-#     plt.imshow(cm, interpolation='nearest', cmap=cmap)
-#     plt.title(title)
-#     plt.colorbar()
-#     tick_marks = np.arange(len(classes))
-#     plt.xticks(tick_marks, classes, rotation=45)
-#     plt.yticks(tick_marks, classes)
-
-#     if normalize:
-#         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-
-#     thresh = cm.max() / 2.
-#     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
-#         plt.text(j, i, cm[i, j],
-#                  horizontalalignment="center",
-#                  color="white" if cm[i, j] > thresh else "black")
-
-#     plt.tight_layout()
-#     plt.ylabel('True label')
-#     plt.xlabel('Predicted label')
-
-# from sklearn.metrics import confusion_matrix
-
-# # Predict the values from the validation dataset
-# Y_pred = model.predict(X_val)
-# # Convert predictions classes to one hot vectors
-# Y_pred_classes = np.argmax(Y_pred,axis = 1)
-# # Convert validation observations to one hot vectors
-# Y_true = np.argmax(Y_val,axis = 1)
-# # compute the confusion matrix
-# # confusion_mtx = confusion_matrix(Y_true, Y_pred_classes)
-# # plot the confusion matrix
-# # plot_confusion_matrix(confusion_mtx, classes = range(2))
-
-# class_names = ['fake', 'real']
-
-# # real_image_path = CASIA2/'Au/Au_ani_00040.jpg'
-# # Image.open(real_image_path)
-
-# # image = prepare_image(real_image_path)
-# # image = image.reshape(-1, 128, 128, 3)
-# # y_pred = model.predict(image)
-# # y_pred_class = np.argmax(y_pred, axis = 1)[0]
-# # print(f'Class: {class_names[y_pred_class]} Confidence: {np.amax(y_pred) * 100:0.2f}')
-
-# # fake_image_path = CASIA2 / 'Tp' / 'Tp_D_NRD_S_N_ani00041_ani00040_00161.tif'
-# # Image.open(fake_image_path)
-
-# # image = prepare_image(fake_image_path)
-# # image = image.reshape(-1, 128, 128, 3)
-# # y_pred = model.predict(image)
-# # y_pred_class = np.argmax(y_pred, axis = 1)[0]
-# # print(f'Class: {class_names[y_pred_class]} Confidence: {np.amax(y_pred) * 100:0.2f}')
-
-# fake_image = os.listdir(CASIA2 / 'Tp')
-
-# correct = 0
-# total = 0
-# for file_name in fake_image:
-#     if file_name.endswith('jpg') or filename.endswith('png'):
-#         fake_image_path = CASIA2 / 'Tp' / file_name
-#         image = prepare_image(fake_image_path)
-#         image = image.reshape(-1, 128, 128, 3)
-#         y_pred = model.predict(image)
-#         y_pred_class = np.argmax(y_pred, axis = 1)[0]
-#         total += 1
-#         if y_pred_class == 0:
-#             correct += 1
-
-# print(f'Total: {total}, Correct: {correct}, Acc: {correct / total * 100.0}')
-
-# real_image =  os.listdir(CASIA2 / 'Au')
-# correct_r = 0
-# total_r = 0
-# for file_name in real_image:
-#     if file_name.endswith('jpg') or filename.endswith('png'):
-#         real_image_path = CASIA2 / 'Au' / file_name
-#         image = prepare_image(real_image_path)
-#         image = image.reshape(-1, 128, 128, 3)
-#         y_pred = model.predict(image)
-#         y_pred_class = np.argmax(y_pred, axis = 1)[0]
-#         total_r += 1
-#         if y_pred_class == 1:
-#             correct_r += 1
-
-# correct += correct_r
-# total += total_r
-# print(f'Total: {total_r}, Correct: {correct_r}, Acc: {correct_r / total_r * 100.0}')
-# print(f'Total: {total}, Correct: {correct}, Acc: {correct / total * 100.0}')
-
-# # CASIA1 = Path("data/input/casia-dataset/CASIA1")
-# # image_path1 = CASIA1 / 'Au/Au_ani_0028.jpg'
-# # Image.open(image_path1)
-
-# # image = prepare_image(image_path1)
-# # image = image.reshape(-1, 128, 128, 3)
-# # y_pred = model.predict(image)
-# # y_pred_class = np.argmax(y_pred, axis = 1)[0]
-# # print(f'Class: {class_names[y_pred_class]} Confidence: {np.amax(y_pred) * 100:0.2f}')
-
-# # image_path2 = CASIA1 / 'Sp/Sp_D_NNN_A_ani0028_pla0007_0284.jpg'
-# # Image.open(image_path2)
-
-# # image = prepare_image(image_path2)
-# # image = image.reshape(-1, 128, 128, 3)
-# # y_pred = model.predict(image)
-# # y_pred_class = np.argmax(y_pred, axis = 1)[0]
-# # print(f'Class: {class_names[y_pred_class]} Confidence: {np.amax(y_pred) * 100:0.2f}')
-
-# # convert_to_ela_image(image_path1, 91)
-
-# # image_1_ELA=convert_to_ela_image(image_path1, 91)
-
-# # convert_to_ela_image(image_path2, 91)
-
-# # image_2_ELA=convert_to_ela_image(image_path2, 91)
-
-# # ela_image = ImageChops.difference(image_1_ELA, image_2_ELA)
-
-# # ela_image
-
-# # print(y_pred_class)
-
-# # def find_manipulated_region(ela, threshold=50):
-# #     mask = np.array(ela) > threshold
-
-# #     # Find the bounding box of the masked region
-# #     if np.any(mask):
-# #         coords = np.argwhere(mask)
-# #         return coords
-# #     else:
-# #         return None
-
-# # def make_pixels_white(img, white_coords):
-# #     width, height = img.size
-# #     black_img = Image.new('RGB', (width, height), color='black')
-# #     img_arr = np.array(img)
-# #     black_arr = np.array(black_img)
-# #     for coord in white_coords:
-# #         x, y, z = coord
-# #         black_arr[x,y,:] = [255,255,255]
-# #     mask = np.all(black_arr == [255,255,255], axis=-1)
-# #     img_arr[mask] = [255,255,255]
-# #     new_img = Image.fromarray(img_arr)
-# #     return new_img
-
-# # if y_pred_class==0:
-# #     ela=convert_to_ela_image(image_path2,91)
-# #     coords=find_manipulated_region(ela)
-# #     modify_boundary=make_pixels_white(ela,coords)
-# #     modify_boundary.show()
