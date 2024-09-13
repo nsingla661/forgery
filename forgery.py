@@ -301,7 +301,7 @@ def build_model():
     model.add(Conv2D(filters = 32, kernel_size = (5, 5), padding = 'valid', activation = 'relu', input_shape = (128, 128, 3)))
     model.add(Conv2D(filters = 32, kernel_size = (5, 5), padding = 'valid', activation = 'relu', input_shape = (128, 128, 3)))
     model.add(MaxPool2D(pool_size = (2, 2)))
-    model.add(Dropout(0.25))
+    model.add(Dropout(0.3))
     model.add(Flatten())
     model.add(Dense(256, activation = 'relu'))
     model.add(Dropout(0.5))
@@ -314,7 +314,7 @@ model.summary()
 from keras import optimizers
 model.compile(loss='categorical_crossentropy', optimizer='Nadam', metrics=['accuracy'])
 
-epochs = 24
+epochs = 12
 batch_size = 32
 
 from keras.models import Sequential
