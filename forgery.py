@@ -369,6 +369,14 @@ def prepare_image(image_path):
 X = [] # ELA converted images
 Y = [] # 0 for fake, 1 for real
 
+def is_image_corrupt(file_path):
+    try:
+        with Image.open(file_path) as img:
+            img.verify()  # Verify if it's a valid image
+        return False
+    except (IOError, SyntaxError) as e:
+        return True
+
 import random
 import numpy as np
 path = CASIA2/'Au/'
@@ -376,10 +384,11 @@ for dirname, _, filenames in os.walk(path):
     for filename in filenames:
         if filename.endswith('jpg') or filename.endswith('png') or filename.endswith('tif'):
             full_path = os.path.join(dirname, filename)
-            X.append(prepare_image(full_path))
-            Y.append(1)
-            if len(Y) % 500 == 0:
-                print(f'Processing {len(Y)} images')
+            if not is_image_corrupt(full_path):
+                X.append(prepare_image(full_path))
+                Y.append(0)
+                if len(Y) % 500 == 0:
+                    print(f'Processing {len(Y)} images')
 
 random.shuffle(X)
 # X = X[:2100]
@@ -392,10 +401,11 @@ for dirname, _, filenames in os.walk(path):
     for filename in filenames:
         if filename.endswith('jpg') or filename.endswith('png') or filename.endswith('tif'):
             full_path = os.path.join(dirname, filename)
-            X.append(prepare_image(full_path))
-            Y.append(0)
-            if len(Y) % 500 == 0:
-                print(f'Processing {len(Y)} images')
+            if not is_image_corrupt(full_path):
+                X.append(prepare_image(full_path))
+                Y.append(0)
+                if len(Y) % 500 == 0:
+                    print(f'Processing {len(Y)} images')
 
 print("length of authentic + tempered images")
 print(len(X), len(Y))
