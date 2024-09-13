@@ -223,151 +223,6 @@ plt.show()
 
 CASIA2 = Path("data/input/casia-dataset/CASIA2")
 
-real_image_path = CASIA2/"Au/Au_ani_00001.jpg"
-Image.open(real_image_path)
-
-convert_to_ela_image(real_image_path, 91)
-
-fake_image_path = CASIA2/'Tp/Tp_D_NRN_S_N_ani10171_ani00001_12458.jpg'
-Image.open(fake_image_path)
-
-convert_to_ela_image(fake_image_path, 91)
-
-"""DENOISING REAL IMAGE"""
-
-# Color-image denoising
-from skimage.restoration import denoise_wavelet, estimate_sigma
-from skimage.util import random_noise
-import skimage.io
-
-img_r1 = skimage.io.imread(CASIA2/'Au/Au_ani_00001.jpg')
-img_r = skimage.img_as_float(img_r1)  # Converting image as float
-
-sigma_est = estimate_sigma(img_r, channel_axis=-1, average_sigmas=True)  # Noise estimation
-
-# Denoising using Bayes
-img_bayes = denoise_wavelet(img_r, method='BayesShrink', mode='soft', wavelet_levels=3,
-                             wavelet='coif5', channel_axis=-1, convert2ycbcr=True, rescale_sigma=True)
-
-# Denoising using Visushrink
-img_visushrink = denoise_wavelet(img_r, method='VisuShrink', mode='soft', sigma=sigma_est/3, wavelet_levels=5,
-                                  wavelet='coif5', channel_axis=-1, convert2ycbcr=True, rescale_sigma=True)
-
-import cv2
-psnr_noisy = cv2.PSNR(img_r,img_r)
-psnr_noisy
-
-psnr_bayes = cv2.PSNR(img_r,img_bayes)
-psnr_bayes
-
-psnr_visu = cv2.PSNR(img_r,img_visushrink)
-psnr_visu
-
-# # Plotting images
-# plt.figure(figsize=(30,30))
-
-# plt.subplot(2,2,1)
-# plt.imshow(img_r1,cmap=plt.cm.gray)
-# plt.title('Original Image',fontsize=30)
-
-# plt.subplot(2,2,2)
-# plt.imshow(img_r,cmap=plt.cm.gray)
-# plt.title('Noisy Image',fontsize=30)
-
-# plt.subplot(2,2,3)
-# plt.imshow(img_bayes,cmap=plt.cm.gray)
-# plt.title('Denoising using Bayes',fontsize=30)
-
-# plt.subplot(2,2,4)
-# plt.imshow(img_visushrink,cmap=plt.cm.gray)
-# plt.title('Denoising using Visushrink',fontsize=30)
-
-# plt.show()
-
-print('PSNR[Original vs. Noisy Image]', psnr_noisy)
-print('PSNR[Original vs. Denoised(VisuShrink)]', psnr_visu)
-print('PSNR[Original vs. Denoised(Bayes)]', psnr_bayes)
-
-"""DENOISING FAKE IMAGE"""
-
-from skimage.restoration import denoise_wavelet, estimate_sigma
-from skimage.util import random_noise
-import skimage.io
-
-img_f = skimage.io.imread(CASIA2/'Tp/Tp_D_NRN_S_N_ani10171_ani00001_12458.jpg')
-img_f = skimage.img_as_float(img_f)  # Converting image as float
-
-sigma = 0.35  # Noise
-imgn = random_noise(img_f, var=sigma**2)  # Adding noise
-
-sigma_est = estimate_sigma(img_f, channel_axis=-1, average_sigmas=True)  # Noise estimation
-
-# Denoising using Bayes
-img_bayes = denoise_wavelet(img_f, method='BayesShrink', mode='soft', wavelet_levels=3,
-                             wavelet='coif5', channel_axis=-1, convert2ycbcr=True, rescale_sigma=True)
-
-# Denoising using Visushrink
-img_visushrink = denoise_wavelet(img_f, method='VisuShrink', mode='soft', sigma=sigma_est/3, wavelet_levels=5,
-                                  wavelet='coif5', channel_axis=-1, convert2ycbcr=True, rescale_sigma=True)
-
-import cv2
-psnr_noisy = cv2.PSNR(img_f,img_f)
-psnr_noisy
-
-psnr_bayes = cv2.PSNR(img_f,img_bayes)
-psnr_bayes
-
-psnr_visu = cv2.PSNR(img_f,img_visushrink)
-psnr_visu
-
-# Plotting images
-# plt.figure(figsize=(30,30))
-
-# plt.subplot(2,2,1)
-# plt.imshow(img_f,cmap=plt.cm.gray)
-# plt.title('Original Image',fontsize=30)
-
-# plt.subplot(2,2,2)
-# plt.imshow(img_f,cmap=plt.cm.gray)
-# plt.title('Noisy Image',fontsize=30)
-
-# plt.subplot(2,2,3)
-# plt.imshow(img_bayes,cmap=plt.cm.gray)
-# plt.title('Original Image',fontsize=30)
-
-# plt.subplot(2,2,4)
-# plt.imshow(img_visushrink,cmap=plt.cm.gray)
-# plt.title('Original Image',fontsize=30)
-
-# plt.show()
-
-print('PSNR[Original vs. Noisy Image]', psnr_noisy)
-print('PSNR[Original vs. Denoised(VisuShrink)]', psnr_visu)
-print('PSNR[Original vs. Denoised(Bayes)]', psnr_bayes)
-
-# Color-image denoising
-from skimage.restoration import (denoise_wavelet,estimate_sigma)
-from skimage.util import random_noise
-# from sklearn.metrics import peak_signal_noise_ratio
-import skimage.io
-
-def denoise_img(img):
-    #img=skimage.io.imread('../input/casia-dataset/CASIA2/Tp/Tp_D_NRN_S_N_ani10171_ani00001_12458.jpg')
-    img=skimage.img_as_float(img_f) #converting image as float
-
-
-    sigma_est=estimate_sigma(img,multichannel=True,average_sigmas=True)  #Noise estimation
-
-    # Denoising using Bayes
-    img_bayes=denoise_wavelet(img,method='BayesShrink',mode='soft',wavelet_levels=3,
-                          wavelet='coif5',multichannel=True,convert2ycbcr=True,rescale_sigma=True)
-
-
-    #Denoising using Visushrink
-    img_visushrink=denoise_wavelet(img,method='VisuShrink',mode='soft',sigma=sigma_est/3,wavelet_levels=5,
-    wavelet='coif5',multichannel=True,convert2ycbcr=True,rescale_sigma=True)
-    return img_bayes
-
 image_size = (128, 128)
 
 def prepare_image(image_path, image_size):
@@ -393,26 +248,26 @@ import numpy as np
 path = CASIA2/'Au/'
 for dirname, _, filenames in os.walk(path):
     for filename in filenames:
-        if filename.lower().endswith(('jpg', 'png')):
+        if filename.lower().endswith(('jpg', 'png', 'tif')):
             full_path = os.path.join(dirname, filename)
             if not is_image_corrupt(full_path):
                 result = prepare_image(full_path, image_size)
                 if result is not None:
                     X.append(result)
-                    Y.append(0)  # Assuming Y label as 0, adjust as needed
+                    Y.append(1)  # Assuming Y label as 0, adjust as needed
                     if len(Y) % 500 == 0:
                         print(f'Processing {len(Y)} images')
 
 random.shuffle(X)
-X = X[:2100]
-Y = Y[:2100]
+X = X[:4100]
+Y = Y[:4100]
 print("length of Authentic images used ")
 print(len(X), len(Y))
 
 path = CASIA2/'Tp/'
 for dirname, _, filenames in os.walk(path):
     for filename in filenames:
-        if filename.lower().endswith(('jpg', 'png')):
+        if filename.lower().endswith(('jpg', 'png', 'tif')):
             full_path = os.path.join(dirname, filename)
             if not is_image_corrupt(full_path):
                 result = prepare_image(full_path, image_size)
