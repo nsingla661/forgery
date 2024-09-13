@@ -87,12 +87,12 @@ import os
 import itertools
 
 def convert_to_ela_image(path, quality):
-    try: 
+    try:
         temp_filename = 'temp_file_name.jpg'
         ela_filename = 'temp_ela.png'
 
         image = Image.open(path).convert('RGB')
-        image.save(temp_filename, 'JPEG', quality = quality)
+        image.save(temp_filename, 'JPEG', quality=quality)
         temp_image = Image.open(temp_filename)
 
         ela_image = ImageChops.difference(image, temp_image)
@@ -104,6 +104,9 @@ def convert_to_ela_image(path, quality):
         scale = 255.0 / max_diff
 
         ela_image = ImageEnhance.Brightness(ela_image).enhance(scale)
+
+        # Cleanup
+        os.remove(temp_filename)
 
         return ela_image
     except OSError as e:
@@ -367,7 +370,7 @@ def denoise_img(img):
 
 image_size = (128, 128)
 
-def prepare_image(image_path):
+def prepare_image(image_path, image_size):
     ela_image = convert_to_ela_image(image_path, 91)
     if ela_image is None:
         return None
@@ -376,12 +379,13 @@ def prepare_image(image_path):
 X = [] # ELA converted images
 Y = [] # 0 for fake, 1 for real
 
-def is_image_corrupt(file_path):
+def is_image_corrupt(image_path):
     try:
-        with Image.open(file_path) as img:
-            img.verify()  # Verify if it's a valid image
+        with Image.open(image_path) as img:
+            img.verify()  # Verify if image is corrupt
         return False
     except (IOError, SyntaxError) as e:
+        print(f"Image {image_path} is corrupt: {e}")
         return True
 
 import random
@@ -389,13 +393,13 @@ import numpy as np
 path = CASIA2/'Au/'
 for dirname, _, filenames in os.walk(path):
     for filename in filenames:
-        if filename.endswith('jpg') or filename.endswith('png') or filename.endswith('tif'):
+        if filename.lower().endswith(('jpg', 'png', 'tif')):
             full_path = os.path.join(dirname, filename)
             if not is_image_corrupt(full_path):
-                result = prepare_image(full_path)
+                result = prepare_image(full_path, image_size)
                 if result is not None:
-                    X.append(prepare_image(result))
-                    Y.append(0)
+                    X.append(result)
+                    Y.append(0)  # Assuming Y label as 0, adjust as needed
                     if len(Y) % 500 == 0:
                         print(f'Processing {len(Y)} images')
 
@@ -408,13 +412,13 @@ print(len(X), len(Y))
 path = CASIA2/'Tp/'
 for dirname, _, filenames in os.walk(path):
     for filename in filenames:
-        if filename.endswith('jpg') or filename.endswith('png') or filename.endswith('tif'):
+        if filename.lower().endswith(('jpg', 'png', 'tif')):
             full_path = os.path.join(dirname, filename)
             if not is_image_corrupt(full_path):
-                result = prepare_image(full_path)
+                result = prepare_image(full_path, image_size)
                 if result is not None:
-                    X.append(prepare_image(result))
-                    Y.append(0)
+                    X.append(result)
+                    Y.append(0)  # Assuming Y label as 0, adjust as needed
                     if len(Y) % 500 == 0:
                         print(f'Processing {len(Y)} images')
 
