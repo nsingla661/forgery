@@ -87,24 +87,28 @@ import os
 import itertools
 
 def convert_to_ela_image(path, quality):
-    temp_filename = 'temp_file_name.jpg'
-    ela_filename = 'temp_ela.png'
+    try: 
+        temp_filename = 'temp_file_name.jpg'
+        ela_filename = 'temp_ela.png'
 
-    image = Image.open(path).convert('RGB')
-    image.save(temp_filename, 'JPEG', quality = quality)
-    temp_image = Image.open(temp_filename)
+        image = Image.open(path).convert('RGB')
+        image.save(temp_filename, 'JPEG', quality = quality)
+        temp_image = Image.open(temp_filename)
 
-    ela_image = ImageChops.difference(image, temp_image)
+        ela_image = ImageChops.difference(image, temp_image)
 
-    extrema = ela_image.getextrema()
-    max_diff = max([ex[1] for ex in extrema])
-    if max_diff == 0:
-        max_diff = 1
-    scale = 255.0 / max_diff
+        extrema = ela_image.getextrema()
+        max_diff = max([ex[1] for ex in extrema])
+        if max_diff == 0:
+            max_diff = 1
+        scale = 255.0 / max_diff
 
-    ela_image = ImageEnhance.Brightness(ela_image).enhance(scale)
+        ela_image = ImageEnhance.Brightness(ela_image).enhance(scale)
 
-    return ela_image
+        return ela_image
+    except OSError as e:
+        print(f"Error processing file {path}: {e}")
+        return None
 
 import tensorflow as tf
 class Config:
@@ -364,7 +368,10 @@ def denoise_img(img):
 image_size = (128, 128)
 
 def prepare_image(image_path):
-    return np.array(convert_to_ela_image(image_path, 91).resize(image_size)).flatten() / 255.0
+    ela_image = convert_to_ela_image(image_path, 91)
+    if ela_image is None:
+        return None
+    return np.array(ela_image.resize(image_size)).flatten() / 255.0
 
 X = [] # ELA converted images
 Y = [] # 0 for fake, 1 for real
@@ -385,14 +392,16 @@ for dirname, _, filenames in os.walk(path):
         if filename.endswith('jpg') or filename.endswith('png') or filename.endswith('tif'):
             full_path = os.path.join(dirname, filename)
             if not is_image_corrupt(full_path):
-                X.append(prepare_image(full_path))
-                Y.append(0)
-                if len(Y) % 500 == 0:
-                    print(f'Processing {len(Y)} images')
+                result = prepare_image(full_path)
+                if result is not None:
+                    X.append(prepare_image(result))
+                    Y.append(0)
+                    if len(Y) % 500 == 0:
+                        print(f'Processing {len(Y)} images')
 
 random.shuffle(X)
-# X = X[:2100]
-# Y = Y[:2100]
+X = X[:5000]
+Y = Y[:5000]
 print("length of Authentic images used ")
 print(len(X), len(Y))
 
@@ -402,10 +411,12 @@ for dirname, _, filenames in os.walk(path):
         if filename.endswith('jpg') or filename.endswith('png') or filename.endswith('tif'):
             full_path = os.path.join(dirname, filename)
             if not is_image_corrupt(full_path):
-                X.append(prepare_image(full_path))
-                Y.append(0)
-                if len(Y) % 500 == 0:
-                    print(f'Processing {len(Y)} images')
+                result = prepare_image(full_path)
+                if result is not None:
+                    X.append(prepare_image(result))
+                    Y.append(0)
+                    if len(Y) % 500 == 0:
+                        print(f'Processing {len(Y)} images')
 
 print("length of authentic + tempered images")
 print(len(X), len(Y))
