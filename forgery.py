@@ -434,7 +434,7 @@ from sklearn.model_selection import train_test_split
 
 # Assuming X and Y are already defined
 
-X_train, X_val, Y_train, Y_val = train_test_split(X, Y, test_size=0.2, random_state=42)
+X_train, X_val, Y_train, Y_val = train_test_split(X, Y, test_size=0.2, random_state=5)
 
 print("training data set : ")
 print(len(X_train), len(Y_train))
