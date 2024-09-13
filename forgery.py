@@ -237,7 +237,7 @@ model.summary()
 from keras import optimizers
 model.compile(loss='categorical_crossentropy', optimizer='Nadam', metrics=['accuracy'])
 
-epochs = 12
+epochs = 15
 batch_size = 32
 
 from keras.models import Sequential
