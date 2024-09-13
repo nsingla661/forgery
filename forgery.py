@@ -393,7 +393,7 @@ import numpy as np
 path = CASIA2/'Au/'
 for dirname, _, filenames in os.walk(path):
     for filename in filenames:
-        if filename.lower().endswith(('jpg', 'png', 'tif')):
+        if filename.lower().endswith(('jpg', 'png')):
             full_path = os.path.join(dirname, filename)
             if not is_image_corrupt(full_path):
                 result = prepare_image(full_path, image_size)
@@ -404,15 +404,15 @@ for dirname, _, filenames in os.walk(path):
                         print(f'Processing {len(Y)} images')
 
 random.shuffle(X)
-X = X[:4000]
-Y = Y[:4000]
+X = X[:2100]
+Y = Y[:2100]
 print("length of Authentic images used ")
 print(len(X), len(Y))
 
 path = CASIA2/'Tp/'
 for dirname, _, filenames in os.walk(path):
     for filename in filenames:
-        if filename.lower().endswith(('jpg', 'png', 'tif')):
+        if filename.lower().endswith(('jpg', 'png')):
             full_path = os.path.join(dirname, filename)
             if not is_image_corrupt(full_path):
                 result = prepare_image(full_path, image_size)
