@@ -67,10 +67,10 @@ def predict_image(image_path):
     predictions = model.predict(image_array)
     
     # Convert prediction to label
-    predicted_label = np.argmax(predictions, axis=1)
+    # predicted_label = np.argmax(predictions, axis=1)
     
     # Return the predicted label
-    return predicted_label
+    return predictions
 
 # Example usage
 if __name__ == "__main__":
