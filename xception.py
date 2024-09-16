@@ -316,21 +316,28 @@ print(len(X_val), len(Y_val))
 from keras import regularizers
 
 
+from tensorflow.keras.applications import Xception
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Flatten, Dropout, InputLayer
+from tensorflow.keras import regularizers
+
 def build_model():
+    # Initialize the base model with pre-trained weights
     base_model = Xception(
         include_top=False, weights="imagenet", input_shape=(128, 128, 3)
     )
-    # Add custom layers on top of Xception
+
+    # Build the model
     model = Sequential()
+    model.add(InputLayer(input_shape=(128, 128, 3)))  # Ensure correct input shape
     model.add(base_model)  # Add the Xception model
-    model.add(Flatten())  # Flatten the output of Xception\
-    model.add(Dense(256, activation="relu", kernel_regularizer=regularizers.l2(0.01)))
+    model.add(Flatten())  # Flatten the output of Xception
+    model.add(Dense(256, activation="relu", kernel_regularizer=regularizers.l2(0.01)))  # Dense layer with L2 regularization
     model.add(Dropout(0.5))  # Dropout for regularization
-    model.add(
-        Dense(2, activation="softmax")
-    )  # Final layer for 2 classes (authentic/forged)
+    model.add(Dense(2, activation="softmax"))  # Final layer for 2 classes (authentic/forged)
 
     return model
+
 
 
 model = build_model()
@@ -378,6 +385,7 @@ for fold, (train_index, val_index) in enumerate(kf.split(X)):
     # Convert labels to categorical
     Y_train = tf.keras.utils.to_categorical(Y_train, num_classes=2)
     Y_val = tf.keras.utils.to_categorical(Y_val, num_classes=2)
+
 
     datagen = ImageDataGenerator(
         featurewise_center=True,
