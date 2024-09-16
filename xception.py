@@ -330,7 +330,6 @@ def build_model():
 
     # Build the model
     model = Sequential()
-    model.add(InputLayer(input_shape=(128, 128, 3)))  # Ensure correct input shape
     model.add(base_model)  # Add the Xception model
     model.add(Flatten())  # Flatten the output of Xception
     model.add(
@@ -371,8 +370,8 @@ early_stopping = EarlyStopping(
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import EarlyStopping
 
-X_train = np.array(X_train, copy=True)
-Y_train = np.array(Y_train, copy=True)
+x_train2 = np.array(X_train, copy=True)
+y_train2 = np.array(Y_train, copy=True)
 
 num_folds = 5
 batch_size = 32
@@ -390,34 +389,29 @@ datagen = ImageDataGenerator(
     featurewise_std_normalization=True,
     rotation_range=10,
     fill_mode="nearest",
-    validation_split=0.2,  # Set validation split to 20%
+    validation_split=0.2,
 )
-
-# Convert Y_train to categorical (assuming binary classification)
-Y_train = tf.keras.utils.to_categorical(Y_train, num_classes=2)
-
-# Fit the data generator on training data
 datagen.fit(X_train)
 
-# Create the train and validation generators
-train_generator = datagen.flow(
-    X_train, Y_train, batch_size=batch_size, subset="training"
-)
 validation_generator = datagen.flow(
-    X_train, Y_train, batch_size=batch_size, subset="validation"
+    x_train2, y_train2, batch_size=32, subset="validation"
 )
+train_generator = datagen.flow(x_train2, y_train2, batch_size=32, subset="training")
 
-# Train the model
+# Ensure correct metric name and mode for early stopping
+early_stopping = EarlyStopping(
+    monitor="val_accuracy", min_delta=0, patience=5, verbose=0, mode="auto"
+)
 history = model.fit(
     train_generator,
     epochs=epochs,
-    validation_data=validation_generator,  # Use validation generator
+    validation_data=validation_generator,
     verbose=1,
     callbacks=[early_stopping],
 )
 
 
-kf = KFold(n_splits=num_folds, shuffle=True, random_state=5)
+# kf = KFold(n_splits=num_folds, shuffle=True, random_state=5)
 # datagen = ImageDataGenerator(
 #     featurewise_center=True,
 #     featurewise_std_normalization=True,
