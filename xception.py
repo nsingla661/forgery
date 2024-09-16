@@ -383,33 +383,31 @@ datagen = ImageDataGenerator(
     rotation_range=10,
     fill_mode="nearest",
 )
-
 for fold, (train_index, val_index) in enumerate(kf.split(X)):
     print(f"Training fold {fold + 1}/{num_folds}")
     X_train, X_val = X[train_index], X[val_index]
     Y_train, Y_val = Y[train_index], Y[val_index]
 
-    Y_train = np.squeeze(Y_train)
-    Y_val = np.squeeze(Y_val)
-    
     # Convert labels to categorical
     Y_train = tf.keras.utils.to_categorical(Y_train, num_classes=2)
     Y_val = tf.keras.utils.to_categorical(Y_val, num_classes=2)
 
+    # Fit the data generator only on X_train
     datagen.fit(X_train)
-    validation_generator = datagen.flow(X_val, Y_val, batch_size=batch_size)
-    train_generator = datagen.flow(X_train, Y_train, batch_size=batch_size)
-    # Ensure correct metric name and mode for early stopping
-    early_stopping = EarlyStopping(
-        monitor="val_accuracy", min_delta=0, patience=2, verbose=0, mode="auto"
-    )
+    
+    # Use datagen to generate augmented data only for X_train, NOT Y_train
+    train_generator = datagen.flow(X_train, batch_size=batch_size)
+    
+    # Train the model using manually provided Y_train
     history = model.fit(
         train_generator,
+        steps_per_epoch=len(X_train) // batch_size,  # Steps per epoch based on X_train
         epochs=epochs,
-        validation_data=validation_generator,
+        validation_data=(X_val, Y_val),  # Directly pass validation data
         verbose=1,
         callbacks=[early_stopping],
     )
+
 
     # model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
 
