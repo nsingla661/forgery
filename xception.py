@@ -94,24 +94,61 @@ from keras.callbacks import EarlyStopping
 from PIL import Image, ImageChops, ImageEnhance
 
 
+# def convert_to_ela_image(path, quality):
+#     try:
+#         temp_filename = "temp_file_name.jpg"
+#         ela_filename = "temp_ela.png"
+
+#         image = Image.open(path).convert("RGB")
+#         image.save(temp_filename, "JPEG", quality=quality)
+#         temp_image = Image.open(temp_filename)
+
+#         ela_image = ImageChops.difference(image, temp_image)
+
+#         extrema = ela_image.getextrema()
+#         max_diff = max([ex[1] for ex in extrema])
+#         if max_diff == 0:
+#             max_diff = 1
+#         scale = 255.0 / max_diff
+
+#         ela_image = ImageEnhance.Brightness(ela_image).enhance(scale)
+
+#         # Cleanup
+#         os.remove(temp_filename)
+
+#         return ela_image
+#     except OSError as e:
+#         print(f"Error processing file {path}: {e}")
+#         return None
+    
+
 def convert_to_ela_image(path, quality):
     try:
         temp_filename = "temp_file_name.jpg"
         ela_filename = "temp_ela.png"
 
-        image = Image.open(path).convert("L")  # Convert to grayscale
+        # Open and convert the image to grayscale
+        image = Image.open(path).convert("L")
         image.save(temp_filename, "JPEG", quality=quality)
-        temp_image = Image.open(temp_filename).convert("L")  # Ensure temp image is also grayscale
 
+        # Open the temporary image and convert it to grayscale
+        temp_image = Image.open(temp_filename).convert("L")
+
+        # Compute the ELA
         ela_image = ImageChops.difference(image, temp_image)
 
+        # Get the extrema for scaling
         extrema = ela_image.getextrema()
-        max_diff = max([ex[1] for ex in extrema])
+        max_diff = max([ex[1] for ex in extrema if isinstance(ex, tuple)])
         if max_diff == 0:
             max_diff = 1
         scale = 255.0 / max_diff
 
+        # Enhance the brightness of the ELA image
         ela_image = ImageEnhance.Brightness(ela_image).enhance(scale)
+
+        # Save the ELA image (optional, for debugging or verification)
+        ela_image.save(ela_filename)
 
         # Cleanup
         os.remove(temp_filename)
