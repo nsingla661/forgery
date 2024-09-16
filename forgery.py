@@ -1,5 +1,4 @@
 import os
-import shutil
 from urllib.parse import unquote, urlparse
 from urllib.request import urlopen
 from urllib.error import HTTPError
@@ -90,6 +89,54 @@ from keras.callbacks import EarlyStopping
 
 from PIL import Image, ImageChops, ImageEnhance
 
+import cv2
+import numpy as np
+
+
+def convert_to_ela_image_cv(path, quality=90):
+    try:
+        temp_filename = "temp_file_name.jpg"
+        ela_filename = "temp_ela.png"
+
+        # Load the original image
+        original = cv2.imread(path)
+        # Save image as JPEG to introduce compression artifacts
+        cv2.imwrite(temp_filename, original, [int(cv2.IMWRITE_JPEG_QUALITY), quality])
+        # Load the compressed image
+        compressed = cv2.imread(temp_filename)
+
+        # Calculate the absolute difference
+        diff = cv2.absdiff(original, compressed)
+
+        # Convert difference image to grayscale
+        diff_gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
+
+        # Normalize the error image
+        max_diff = np.max(diff_gray)
+        if max_diff == 0:
+            max_diff = 1
+        scale = 255.0 / max_diff
+        ela_image = cv2.convertScaleAbs(diff_gray, alpha=scale)
+
+        # Save the result
+        cv2.imwrite(ela_filename, ela_image)
+
+        # Cleanup
+        os.remove(temp_filename)
+
+        return ela_image
+    except Exception as e:
+        print(f"Error processing file {path}: {e}")
+        return None
+
+
+# Example usage:
+ela_image = convert_to_ela_image_cv("path_to_image.png", quality=90)
+if ela_image is not None:
+    cv2.imshow("ELA Image", ela_image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
 
 def convert_to_ela_image(path, quality):
     try:
@@ -161,60 +208,11 @@ CASIA2 = Path("data/input/casia-dataset/CASIA2")
 image_size = (128, 128)
 
 
-import cv2
-import numpy as np
-import os
-
-def convert_to_ela_image_cv(path, quality=90):
-    try:
-        temp_filename = 'temp_file_name.jpg'
-        ela_filename = 'temp_ela.png'
-
-        # Load the original image
-        original = cv2.imread(path)
-        if original is None:
-            raise ValueError(f"Image at {path} could not be loaded.")
-
-        # Save image as JPEG to introduce compression artifacts
-        cv2.imwrite(temp_filename, original, [int(cv2.IMWRITE_JPEG_QUALITY), quality])
-        # Load the compressed image
-        compressed = cv2.imread(temp_filename)
-        if compressed is None:
-            raise ValueError(f"Compressed image could not be loaded from {temp_filename}.")
-
-        # Calculate the absolute difference
-        diff = cv2.absdiff(original, compressed)
-        
-        # Convert difference image to grayscale
-        diff_gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
-        
-        # Normalize the error image
-        max_diff = np.max(diff_gray)
-        if max_diff == 0:
-            max_diff = 1
-        scale = 255.0 / max_diff
-        ela_image = cv2.convertScaleAbs(diff_gray, alpha=scale)
-        
-        # Save the result
-        cv2.imwrite(ela_filename, ela_image)
-
-        # Cleanup
-        os.remove(temp_filename)
-
-        return ela_image
-    except Exception as e:
-        print(f"Error processing file {path}: {e}")
-        return None
-
 def prepare_image(image_path, image_size=(128, 128)):
     ela_image = convert_to_ela_image_cv(image_path, 91)
     if ela_image is None:
         return None
-
-    # Resize using OpenCV
-    ela_image_resized = cv2.resize(ela_image, image_size, interpolation=cv2.INTER_LINEAR)
-    return ela_image_resized.flatten() / 255.0
-
+    return np.array(ela_image.resize(image_size)).flatten() / 255.0
 
 
 X = []  # ELA converted images
@@ -379,16 +377,16 @@ history = model.fit(
     callbacks=[early_stopping],
 )
 
-# model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
+model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
 
-# hist = model.fit(
-#     X_train,
-#     Y_train,
-#     batch_size=batch_size,
-#     epochs=epochs,
-#     validation_data=(X_val, Y_val),
-#     callbacks=[early_stopping],
-# )
+hist = model.fit(
+    X_train,
+    Y_train,
+    batch_size=batch_size,
+    epochs=epochs,
+    validation_data=(X_val, Y_val),
+    callbacks=[early_stopping],
+)
 
 
 print("starting to save the model")
