@@ -3,31 +3,23 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.applications import ResNet50
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Dense, Flatten, GlobalAveragePooling2D
+from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
-
+from PIL import Image, ImageChops, ImageEnhance
 
 # Configuration
 class Config:
-    epochs = 30
+    epochs = 2
     batch_size = 32
     lr = 1e-4
     image_size = (224, 224)  # ResNet50 expects (224, 224) images
     n_labels = 2
 
-
 # Prepare Data
-import numpy as np
-import os
-from PIL import Image, ImageChops, ImageEnhance
-from tensorflow.keras.utils import to_categorical
-from sklearn.model_selection import train_test_split
-
-
 def convert_to_ela_image(path, quality):
     try:
         temp_filename = "temp_file_name.jpg"
@@ -54,9 +46,8 @@ def convert_to_ela_image(path, quality):
         print(f"Error processing file {path}: {e}")
         return None
 
-
 def prepare_data():
-    image_size = (224, 224)  # ResNet50 expects images of size 224x224
+    image_size = Config.image_size  # ResNet50 expects images of size 224x224
 
     X = []
     Y = []
@@ -87,19 +78,12 @@ def prepare_data():
     process_images(path_tampered, 0)
 
     X = np.array(X)
-    Y = to_categorical(Y, num_classes=2)
+    Y = to_categorical(Y, num_classes=Config.n_labels)
 
     return X, Y
 
-
 # Use the function to prepare your data
 X, Y = prepare_data()
-
-# Convert labels to categorical format
-Y = to_categorical(Y, Config.n_labels)
-
-# Reshape X to fit the expected input size of ResNet50
-X = X.reshape(-1, *Config.image_size, 3)
 
 # Split data
 X_train, X_val, Y_train, Y_val = train_test_split(X, Y, test_size=0.2, random_state=5)
@@ -158,25 +142,25 @@ history = model.fit(
     callbacks=[early_stopping],
 )
 
-# Optionally, unfreeze some layers and fine-tune
-for layer in base_model.layers[-20:]:  # Unfreeze the last 20 layers
-    layer.trainable = True
+# # Optionally, unfreeze some layers and fine-tune
+# for layer in base_model.layers[-20:]:  # Unfreeze the last 20 layers
+#     layer.trainable = True
 
-# Recompile the model after unfreezing
-model.compile(
-    optimizer=Adam(learning_rate=Config.lr / 10),
-    loss="categorical_crossentropy",
-    metrics=["accuracy"],
-)
+# # Recompile the model after unfreezing
+# model.compile(
+#     optimizer=Adam(learning_rate=Config.lr / 10),
+#     loss="categorical_crossentropy",
+#     metrics=["accuracy"],
+# )
 
-# Fine-tune the model
-history_fine = model.fit(
-    train_generator,
-    epochs=Config.epochs,
-    validation_data=validation_generator,
-    verbose=1,
-    callbacks=[early_stopping],
-)
+# # Fine-tune the model
+# history_fine = model.fit(
+#     train_generator,
+#     epochs=Config.epochs,
+#     validation_data=validation_generator,
+#     verbose=1,
+#     callbacks=[early_stopping],
+# )
 
 # Save the model
 print("Starting to save the model")
