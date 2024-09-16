@@ -127,12 +127,9 @@ def convert_to_ela_image(path, quality):
         temp_filename = "temp_file_name.jpg"
         ela_filename = "temp_ela.png"
 
-        # Open and convert the image to grayscale
-        image = Image.open(path).convert("L")
+        image = Image.open(path).convert("RGB")
         image.save(temp_filename, "JPEG", quality=quality)
-
-        # Open the temporary image and convert it to grayscale
-        temp_image = Image.open(temp_filename).convert("L")
+        temp_image = Image.open(temp_filename)
 
         # Compute the ELA
         ela_image = ImageChops.difference(image, temp_image)
