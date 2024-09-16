@@ -11,6 +11,7 @@ from tensorflow.keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
 from PIL import Image, ImageChops, ImageEnhance
 
+
 # Configuration
 class Config:
     epochs = 20
@@ -18,6 +19,7 @@ class Config:
     lr = 1e-4
     image_size = (224, 224)  # ResNet50 expects (224, 224) images
     n_labels = 2
+
 
 # Prepare Data
 def convert_to_ela_image(path, quality):
@@ -45,6 +47,7 @@ def convert_to_ela_image(path, quality):
     except OSError as e:
         print(f"Error processing file {path}: {e}")
         return None
+
 
 def prepare_data():
     image_size = Config.image_size  # ResNet50 expects images of size 224x224
@@ -81,6 +84,7 @@ def prepare_data():
     Y = to_categorical(Y, num_classes=Config.n_labels)
 
     return X, Y
+
 
 # Use the function to prepare your data
 X, Y = prepare_data()
