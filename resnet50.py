@@ -14,7 +14,7 @@ from PIL import Image, ImageChops, ImageEnhance
 
 # Configuration
 class Config:
-    epochs = 12
+    epochs = 15
     batch_size = 32
     lr = 1e-4
     image_size = (224, 224)  # ResNet50 expects (224, 224) images
@@ -80,9 +80,9 @@ def prepare_data():
                         print(f"Error processing image {full_path}: {e}")
 
     # Process a limited number of authentic images (label 1)
-    process_images(path_authentic, 1, max_images=1000)
+    process_images(path_authentic, 1, max_images=3000)
     # Process a limited number of tampered images (label 0)
-    process_images(path_tampered, 0, max_images=1000)
+    process_images(path_tampered, 0, max_images=3000)
 
     X = np.array(X)
     Y = to_categorical(Y, num_classes=Config.n_labels)
