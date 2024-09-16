@@ -389,6 +389,9 @@ for fold, (train_index, val_index) in enumerate(kf.split(X)):
     X_train, X_val = X[train_index], X[val_index]
     Y_train, Y_val = Y[train_index], Y[val_index]
 
+    Y_train = np.squeeze(Y_train)
+    Y_val = np.squeeze(Y_val)
+    
     # Convert labels to categorical
     Y_train = tf.keras.utils.to_categorical(Y_train, num_classes=2)
     Y_val = tf.keras.utils.to_categorical(Y_val, num_classes=2)
