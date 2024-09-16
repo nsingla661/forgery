@@ -377,7 +377,12 @@ Y = np.array(Y_train, copy=True)
 num_folds = 5
 batch_size = 32
 kf = KFold(n_splits=num_folds, shuffle=True, random_state=5)
-
+datagen = ImageDataGenerator(
+    featurewise_center=True,
+    featurewise_std_normalization=True,
+    rotation_range=10,
+    fill_mode="nearest",
+)
 
 for fold, (train_index, val_index) in enumerate(kf.split(X)):
     print(f"Training fold {fold + 1}/{num_folds}")
@@ -387,12 +392,7 @@ for fold, (train_index, val_index) in enumerate(kf.split(X)):
     # Convert labels to categorical
     Y_train = tf.keras.utils.to_categorical(Y_train, num_classes=2)
     Y_val = tf.keras.utils.to_categorical(Y_val, num_classes=2)
-    datagen = ImageDataGenerator(
-        featurewise_center=True,
-        featurewise_std_normalization=True,
-        rotation_range=10,
-        fill_mode="nearest",
-    )
+
     datagen.fit(X_train)
     validation_generator = datagen.flow(X_val, Y_val, batch_size=batch_size)
     train_generator = datagen.flow(X_train, Y_train, batch_size=batch_size)
