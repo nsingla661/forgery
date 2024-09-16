@@ -348,7 +348,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 # Define your initial learning rate
 init_lr = 1e-4
 
-optimizer = Adam(lr=init_lr, decay=init_lr / epochs)
+optimizer = Adam(learning_rate=init_lr, decay=init_lr / epochs)
 model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
 
 early_stopping = EarlyStopping(
