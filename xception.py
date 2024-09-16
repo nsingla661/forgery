@@ -371,54 +371,95 @@ early_stopping = EarlyStopping(
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import EarlyStopping
 
-X = np.array(X_train, copy=True)
-Y = np.array(Y_train, copy=True)
+X_train = np.array(X_train, copy=True)
+Y_train = np.array(Y_train, copy=True)
 
 num_folds = 5
 batch_size = 32
-kf = KFold(n_splits=num_folds, shuffle=True, random_state=5)
+
+
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.callbacks import EarlyStopping
+import numpy as np
+
+# Assuming X_train and Y_train are already initialized properly
+
+# Set up ImageDataGenerator with a 20% validation split
 datagen = ImageDataGenerator(
     featurewise_center=True,
     featurewise_std_normalization=True,
     rotation_range=10,
     fill_mode="nearest",
+    validation_split=0.2,  # Set validation split to 20%
 )
-for fold, (train_index, val_index) in enumerate(kf.split(X)):
-    print(f"Training fold {fold + 1}/{num_folds}")
-    X_train, X_val = X[train_index], X[val_index]
-    Y_train, Y_val = Y[train_index], Y[val_index]
 
-    # Convert labels to categorical
-    Y_train = tf.keras.utils.to_categorical(Y_train, num_classes=2)
-    Y_val = tf.keras.utils.to_categorical(Y_val, num_classes=2)
+# Convert Y_train to categorical (assuming binary classification)
+Y_train = tf.keras.utils.to_categorical(Y_train, num_classes=2)
 
-    # Fit the data generator only on X_train
-    datagen.fit(X_train)
-    
-    # Use datagen to generate augmented data only for X_train, NOT Y_train
-    train_generator = datagen.flow(X_train, batch_size=batch_size)
-    
-    # Train the model using manually provided Y_train
-    history = model.fit(
-        train_generator,
-        steps_per_epoch=len(X_train) // batch_size,  # Steps per epoch based on X_train
-        epochs=epochs,
-        validation_data=(X_val, Y_val),  # Directly pass validation data
-        verbose=1,
-        callbacks=[early_stopping],
-    )
+# Fit the data generator on training data
+datagen.fit(X_train)
+
+# Create the train and validation generators
+train_generator = datagen.flow(
+    X_train, Y_train, batch_size=batch_size, subset="training"
+)
+validation_generator = datagen.flow(
+    X_train, Y_train, batch_size=batch_size, subset="validation"
+)
+
+# Train the model
+history = model.fit(
+    train_generator,
+    epochs=epochs,
+    validation_data=validation_generator,  # Use validation generator
+    verbose=1,
+    callbacks=[early_stopping],
+)
 
 
-    # model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
+kf = KFold(n_splits=num_folds, shuffle=True, random_state=5)
+# datagen = ImageDataGenerator(
+#     featurewise_center=True,
+#     featurewise_std_normalization=True,
+#     rotation_range=10,
+#     fill_mode="nearest",
+# )
+# for fold, (train_index, val_index) in enumerate(kf.split(X)):
+#     print(f"Training fold {fold + 1}/{num_folds}")
+#     X_train, X_val = X[train_index], X[val_index]
+#     Y_train, Y_val = Y[train_index], Y[val_index]
 
-    # hist = model.fit(
-    #     X_train,
-    #     Y_train,
-    #     batch_size=batch_size,
-    #     epochs=epochs,
-    #     validation_data=(X_val, Y_val),
-    #     callbacks=[early_stopping],
-    # )
+#     # Convert labels to categorical
+#     Y_train = tf.keras.utils.to_categorical(Y_train, num_classes=2)
+#     Y_val = tf.keras.utils.to_categorical(Y_val, num_classes=2)
+
+#     # Fit the data generator only on X_train
+#     datagen.fit(X_train)
+
+#     # Use datagen to generate augmented data only for X_train, NOT Y_train
+#     train_generator = datagen.flow(X_train, batch_size=batch_size)
+
+#     # Train the model using manually provided Y_train
+#     history = model.fit(
+#         train_generator,
+#         steps_per_epoch=len(X_train) // batch_size,  # Steps per epoch based on X_train
+#         epochs=epochs,
+#         validation_data=(X_val, Y_val),  # Directly pass validation data
+#         verbose=1,
+#         callbacks=[early_stopping],
+#     )
+
+
+#     # model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
+
+#     # hist = model.fit(
+#     #     X_train,
+#     #     Y_train,
+#     #     batch_size=batch_size,
+#     #     epochs=epochs,
+#     #     validation_data=(X_val, Y_val),
+#     #     callbacks=[early_stopping],
+#     # )
 
 
 print("starting to save the model")
