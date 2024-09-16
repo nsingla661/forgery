@@ -74,9 +74,43 @@ def predict_image(image_path):
 
 # Example usage
 if __name__ == "__main__":
-    image_path = "image (9).png"  # Replace with the path to your image
     try:
+        image_path = "image (9).png"
         label = predict_image(image_path)
-        print(f"The predicted label for the image is: {label}")
+        print(f"The predicted label for the {image_path} image is: {label}")
+    
+        image_path = "image (10).png"
+        label = predict_image(image_path)
+        print(f"The predicted label for the {image_path} image is: {label}")
+    
+        image_path = "Drivers-Forged (3) copy.jpg"
+        label = predict_image(image_path)
+        print(f"The predicted label for the {image_path} image is: {label}")
+    
+        image_path = "Robert_Forged.jpg"
+        label = predict_image(image_path)
+        print(f"The predicted label for the {image_path} image is: {label}")
+    
+        image_path = "Untitled design-2.png"
+        label = predict_image(image_path)
+        print(f"The predicted label for the {image_path} image is: {label}")
+    
+        image_path = "p_camera.jpeg"
+        label = predict_image(image_path)
+        print(f"The predicted label for the {image_path} image is: {label}")
+    
+        image_path = "s1.png"
+        label = predict_image(image_path)
+        print(f"The predicted label for the {image_path} image is: {label}")
+    
+        image_path = "s2.png"
+        label = predict_image(image_path)
+        print(f"The predicted label for the {image_path} image is: {label}")
+    
+        image_path = "photo_2024-09-10 13.46.53.jpeg"
+        label = predict_image(image_path)
+        print(f"The predicted label for the {image_path} image is: {label}")
+    
+    
     except Exception as e:
         print(f"An error occurred: {e}")
