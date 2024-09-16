@@ -14,7 +14,7 @@ from PIL import Image, ImageChops, ImageEnhance
 
 # Configuration
 class Config:
-    epochs = 20
+    epochs = 12
     batch_size = 32
     lr = 1e-4
     image_size = (224, 224)  # ResNet50 expects (224, 224) images
@@ -59,10 +59,13 @@ def prepare_data():
     path_authentic = "data/input/casia-dataset/CASIA2/Au/"
     path_tampered = "data/input/casia-dataset/CASIA2/Tp/"
 
-    def process_images(path, label):
+    def process_images(path, label, max_images):
+        count = 0
         for dirname, _, filenames in os.walk(path):
             for filename in filenames:
                 if filename.lower().endswith(("jpg", "png", "tif")):
+                    if count >= max_images:
+                        return
                     full_path = os.path.join(dirname, filename)
                     try:
                         ela_image = convert_to_ela_image(full_path, 91)
@@ -70,21 +73,21 @@ def prepare_data():
                             ela_image = ela_image.resize(image_size)
                             X.append(np.array(ela_image))
                             Y.append(label)
-                            if len(Y) % 500 == 0:
-                                print(f"Processing {len(Y)} images")
+                            count += 1
+                            if count % 100 == 0:
+                                print(f"Processed {count} images")
                     except Exception as e:
                         print(f"Error processing image {full_path}: {e}")
 
-    # Process authentic images (label 1)
-    process_images(path_authentic, 1)
-    # Process tampered images (label 0)
-    process_images(path_tampered, 0)
+    # Process a limited number of authentic images (label 1)
+    process_images(path_authentic, 1, max_images=1000)
+    # Process a limited number of tampered images (label 0)
+    process_images(path_tampered, 0, max_images=1000)
 
     X = np.array(X)
     Y = to_categorical(Y, num_classes=Config.n_labels)
 
     return X, Y
-
 
 # Use the function to prepare your data
 X, Y = prepare_data()
