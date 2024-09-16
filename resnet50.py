@@ -13,7 +13,7 @@ from PIL import Image, ImageChops, ImageEnhance
 
 # Configuration
 class Config:
-    epochs = 2
+    epochs = 20
     batch_size = 32
     lr = 1e-4
     image_size = (224, 224)  # ResNet50 expects (224, 224) images
@@ -142,26 +142,26 @@ history = model.fit(
     callbacks=[early_stopping],
 )
 
-# # Optionally, unfreeze some layers and fine-tune
-# for layer in base_model.layers[-20:]:  # Unfreeze the last 20 layers
-#     layer.trainable = True
+# Optionally, unfreeze some layers and fine-tune
+for layer in base_model.layers[-20:]:  # Unfreeze the last 20 layers
+    layer.trainable = True
 
-# # Recompile the model after unfreezing
-# model.compile(
-#     optimizer=Adam(learning_rate=Config.lr / 10),
-#     loss="categorical_crossentropy",
-#     metrics=["accuracy"],
-# )
+# Recompile the model after unfreezing
+model.compile(
+    optimizer=Adam(learning_rate=Config.lr / 10),
+    loss="categorical_crossentropy",
+    metrics=["accuracy"],
+)
 
-# # Fine-tune the model
-# history_fine = model.fit(
-#     train_generator,
-#     epochs=Config.epochs,
-#     validation_data=validation_generator,
-#     verbose=1,
-#     callbacks=[early_stopping],
-# )
+# Fine-tune the model
+history_fine = model.fit(
+    train_generator,
+    epochs=Config.epochs,
+    validation_data=validation_generator,
+    verbose=1,
+    callbacks=[early_stopping],
+)
 
 # Save the model
 print("Starting to save the model")
-model.save("model_resnet50_finetuned.h5")
+model.save("model_resnet50_finetuned_complete.h5")
