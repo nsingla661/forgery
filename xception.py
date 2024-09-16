@@ -321,6 +321,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Flatten, Dropout, InputLayer
 from tensorflow.keras import regularizers
 
+
 def build_model():
     # Initialize the base model with pre-trained weights
     base_model = Xception(
@@ -332,20 +333,19 @@ def build_model():
     model.add(InputLayer(input_shape=(128, 128, 3)))  # Ensure correct input shape
     model.add(base_model)  # Add the Xception model
     model.add(Flatten())  # Flatten the output of Xception
-    model.add(Dense(256, activation="relu", kernel_regularizer=regularizers.l2(0.01)))  # Dense layer with L2 regularization
+    model.add(
+        Dense(256, activation="relu", kernel_regularizer=regularizers.l2(0.01))
+    )  # Dense layer with L2 regularization
     model.add(Dropout(0.5))  # Dropout for regularization
-    model.add(Dense(2, activation="softmax"))  # Final layer for 2 classes (authentic/forged)
+    model.add(
+        Dense(2, activation="softmax")
+    )  # Final layer for 2 classes (authentic/forged)
 
     return model
 
 
-
 model = build_model()
 model.summary()
-
-from keras import optimizers
-
-model.compile(loss="categorical_crossentropy", optimizer="Nadam", metrics=["accuracy"])
 
 epochs = 8
 batch_size = 32
@@ -358,14 +358,23 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 # Define your initial learning rate
 init_lr = 1e-4
 
-optimizer = Adam(learning_rate=init_lr, decay=init_lr / epochs)
-model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
+optimizer = Adam(learning_rate=init_lr)
+model.compile(
+    optimizer=optimizer, loss="categorical_crossentropy", metrics=["accuracy"]
+)
 
 early_stopping = EarlyStopping(
     monitor="val_accuracy", min_delta=0, patience=2, verbose=0, mode="auto"
 )
 
 
+datagen = ImageDataGenerator(
+    featurewise_center=True,
+    featurewise_std_normalization=True,
+    rotation_range=10,
+    fill_mode="nearest",
+    validation_split=0.2,
+)
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import EarlyStopping
 
@@ -385,15 +394,6 @@ for fold, (train_index, val_index) in enumerate(kf.split(X)):
     # Convert labels to categorical
     Y_train = tf.keras.utils.to_categorical(Y_train, num_classes=2)
     Y_val = tf.keras.utils.to_categorical(Y_val, num_classes=2)
-
-
-    datagen = ImageDataGenerator(
-        featurewise_center=True,
-        featurewise_std_normalization=True,
-        rotation_range=10,
-        fill_mode="nearest",
-        validation_split=0.2,
-    )
 
     datagen.fit(X_train)
     validation_generator = datagen.flow(
