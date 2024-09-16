@@ -274,8 +274,8 @@ for dirname, _, filenames in os.walk(path):
                         print(f"Processing {len(Y)} images")
 
 random.shuffle(X)
-X = X[:3000]
-Y = Y[:3000]
+X = X[:4000]
+Y = Y[:4000]
 print("length of Authentic images used ")
 print(len(X), len(Y))
 
@@ -337,7 +337,7 @@ from keras import optimizers
 
 model.compile(loss="categorical_crossentropy", optimizer="Nadam", metrics=["accuracy"])
 
-epochs = 2
+epochs = 20
 batch_size = 32
 
 from keras.models import Sequential
