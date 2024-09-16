@@ -360,7 +360,7 @@ init_lr = 1e-4
 
 optimizer = Adam(learning_rate=init_lr)
 model.compile(
-    optimizer=optimizer, loss="categorical_crossentropy", metrics=["accuracy"]
+    optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"]
 )
 
 early_stopping = EarlyStopping(
