@@ -99,9 +99,9 @@ def convert_to_ela_image(path, quality):
         temp_filename = "temp_file_name.jpg"
         ela_filename = "temp_ela.png"
 
-        image = Image.open(path).convert("RGB")
+        image = Image.open(path).convert("L")  # Convert to grayscale
         image.save(temp_filename, "JPEG", quality=quality)
-        temp_image = Image.open(temp_filename)
+        temp_image = Image.open(temp_filename).convert("L")  # Ensure temp image is also grayscale
 
         ela_image = ImageChops.difference(image, temp_image)
 
