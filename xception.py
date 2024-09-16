@@ -4,6 +4,7 @@ from urllib.parse import unquote, urlparse
 from urllib.request import urlopen
 from urllib.error import HTTPError
 from zipfile import ZipFile
+from sklearn.model_selection import KFold
 import tarfile
 import sys
 from tempfile import NamedTemporaryFile
@@ -305,12 +306,14 @@ from sklearn.model_selection import train_test_split
 
 # Assuming X and Y are already defined
 
-X_train, X_val, Y_train, Y_val = train_test_split(X, Y, test_size=0.2, random_state=5)
+X_train, X_val, Y_train, Y_val = train_test_split(X, Y, test_size=0.05, random_state=5)
 
 print("training data set : ")
 print(len(X_train), len(Y_train))
 print("print validation data set : ")
 print(len(X_val), len(Y_val))
+
+from keras import regularizers
 
 
 def build_model():
@@ -320,8 +323,8 @@ def build_model():
     # Add custom layers on top of Xception
     model = Sequential()
     model.add(base_model)  # Add the Xception model
-    model.add(Flatten())  # Flatten the output of Xception
-    model.add(Dense(256, activation="relu"))  # Dense layer
+    model.add(Flatten())  # Flatten the output of Xception\
+    model.add(Dense(256, activation="relu", kernel_regularizer=regularizers.l2(0.01)))
     model.add(Dropout(0.5))  # Dropout for regularization
     model.add(
         Dense(2, activation="softmax")
@@ -337,7 +340,7 @@ from keras import optimizers
 
 model.compile(loss="categorical_crossentropy", optimizer="Nadam", metrics=["accuracy"])
 
-epochs = 20
+epochs = 8
 batch_size = 32
 
 from keras.models import Sequential
@@ -352,53 +355,67 @@ optimizer = Adam(learning_rate=init_lr, decay=init_lr / epochs)
 model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
 
 early_stopping = EarlyStopping(
-    monitor="val_accuracy", min_delta=0, patience=5, verbose=0, mode="auto"
+    monitor="val_accuracy", min_delta=0, patience=2, verbose=0, mode="auto"
 )
 
 
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import EarlyStopping
 
-x_train2 = np.array(X_train, copy=True)
-y_train2 = np.array(Y_train, copy=True)
+X = np.array(X_train, copy=True)
+Y = np.array(Y_train, copy=True)
 
-datagen = ImageDataGenerator(
-    featurewise_center=True,
-    featurewise_std_normalization=True,
-    rotation_range=10,
-    fill_mode="nearest",
-    validation_split=0.2,
-)
+num_folds = 5
+batch_size = 32
+kf = KFold(n_splits=num_folds, shuffle=True, random_state=5)
 
-datagen.fit(X_train)
 
-validation_generator = datagen.flow(
-    x_train2, y_train2, batch_size=32, subset="validation"
-)
-train_generator = datagen.flow(x_train2, y_train2, batch_size=32, subset="training")
+for fold, (train_index, val_index) in enumerate(kf.split(X)):
+    print(f"Training fold {fold + 1}/{num_folds}")
+    X_train, X_val = X[train_index], X[val_index]
+    Y_train, Y_val = Y[train_index], Y[val_index]
 
-# Ensure correct metric name and mode for early stopping
-early_stopping = EarlyStopping(
-    monitor="val_accuracy", min_delta=0, patience=5, verbose=0, mode="auto"
-)
-history = model.fit(
-    train_generator,
-    epochs=epochs,
-    validation_data=validation_generator,
-    verbose=1,
-    callbacks=[early_stopping],
-)
+    # Convert labels to categorical
+    Y_train = tf.keras.utils.to_categorical(Y_train, num_classes=2)
+    Y_val = tf.keras.utils.to_categorical(Y_val, num_classes=2)
 
-# model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
+    datagen = ImageDataGenerator(
+        featurewise_center=True,
+        featurewise_std_normalization=True,
+        rotation_range=10,
+        fill_mode="nearest",
+        validation_split=0.2,
+    )
 
-# hist = model.fit(
-#     X_train,
-#     Y_train,
-#     batch_size=batch_size,
-#     epochs=epochs,
-#     validation_data=(X_val, Y_val),
-#     callbacks=[early_stopping],
-# )
+    datagen.fit(X_train)
+    validation_generator = datagen.flow(
+        X_val, Y_val, batch_size=batch_size, subset="validation"
+    )
+    train_generator = datagen.flow(
+        X_train, Y_train, batch_size=batch_size, subset="training"
+    )
+    # Ensure correct metric name and mode for early stopping
+    early_stopping = EarlyStopping(
+        monitor="val_accuracy", min_delta=0, patience=2, verbose=0, mode="auto"
+    )
+    history = model.fit(
+        train_generator,
+        epochs=epochs,
+        validation_data=validation_generator,
+        verbose=1,
+        callbacks=[early_stopping],
+    )
+
+    # model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
+
+    # hist = model.fit(
+    #     X_train,
+    #     Y_train,
+    #     batch_size=batch_size,
+    #     epochs=epochs,
+    #     validation_data=(X_val, Y_val),
+    #     callbacks=[early_stopping],
+    # )
 
 
 print("starting to save the model")
