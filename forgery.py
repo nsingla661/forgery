@@ -161,6 +161,10 @@ CASIA2 = Path("data/input/casia-dataset/CASIA2")
 image_size = (128, 128)
 
 
+import cv2
+import numpy as np
+import os
+
 def convert_to_ela_image_cv(path, quality=90):
     try:
         temp_filename = 'temp_file_name.jpg'
@@ -168,10 +172,15 @@ def convert_to_ela_image_cv(path, quality=90):
 
         # Load the original image
         original = cv2.imread(path)
+        if original is None:
+            raise ValueError(f"Image at {path} could not be loaded.")
+
         # Save image as JPEG to introduce compression artifacts
         cv2.imwrite(temp_filename, original, [int(cv2.IMWRITE_JPEG_QUALITY), quality])
         # Load the compressed image
         compressed = cv2.imread(temp_filename)
+        if compressed is None:
+            raise ValueError(f"Compressed image could not be loaded from {temp_filename}.")
 
         # Calculate the absolute difference
         diff = cv2.absdiff(original, compressed)
@@ -197,12 +206,15 @@ def convert_to_ela_image_cv(path, quality=90):
         print(f"Error processing file {path}: {e}")
         return None
 
-
 def prepare_image(image_path, image_size=(128, 128)):
     ela_image = convert_to_ela_image_cv(image_path, 91)
     if ela_image is None:
         return None
-    return np.array(ela_image.resize(image_size)).flatten() / 255.0
+
+    # Resize using OpenCV
+    ela_image_resized = cv2.resize(ela_image, image_size, interpolation=cv2.INTER_LINEAR)
+    return ela_image_resized.flatten() / 255.0
+
 
 
 X = []  # ELA converted images
