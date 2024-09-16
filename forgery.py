@@ -367,16 +367,16 @@ history = model.fit(
     callbacks=[early_stopping],
 )
 
-model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
+# model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
 
-hist = model.fit(
-    X_train,
-    Y_train,
-    batch_size=batch_size,
-    epochs=epochs,
-    validation_data=(X_val, Y_val),
-    callbacks=[early_stopping],
-)
+# hist = model.fit(
+#     X_train,
+#     Y_train,
+#     batch_size=batch_size,
+#     epochs=epochs,
+#     validation_data=(X_val, Y_val),
+#     callbacks=[early_stopping],
+# )
 
 
 print("starting to save the model")
