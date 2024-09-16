@@ -92,26 +92,21 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import EarlyStopping
 
 from PIL import Image, ImageChops, ImageEnhance
+
+
 def convert_to_ela_image(path, quality):
     try:
         temp_filename = "temp_file_name.jpg"
         ela_filename = "temp_ela.png"
 
-        image = Image.open(path).convert("L")  # Convert to grayscale
+        image = Image.open(path).convert("RGB")
         image.save(temp_filename, "JPEG", quality=quality)
-        temp_image = Image.open(temp_filename).convert("L")  # Ensure temp image is also grayscale
+        temp_image = Image.open(temp_filename)
 
         ela_image = ImageChops.difference(image, temp_image)
 
         extrema = ela_image.getextrema()
-        
-        # Ensure extrema has the expected format
-        if not extrema or not isinstance(extrema[0], tuple):
-            print(f"Unexpected extrema format: {extrema}")
-            max_diff = 1
-        else:
-            max_diff = max([ex[1] for ex in extrema if isinstance(ex, tuple) and len(ex) > 1])
-
+        max_diff = max([ex[1] for ex in extrema])
         if max_diff == 0:
             max_diff = 1
         scale = 255.0 / max_diff
@@ -125,6 +120,40 @@ def convert_to_ela_image(path, quality):
     except OSError as e:
         print(f"Error processing file {path}: {e}")
         return None
+    
+# def convert_to_ela_image(path, quality):
+#     try:
+#         temp_filename = "temp_file_name.jpg"
+#         ela_filename = "temp_ela.png"
+
+#         image = Image.open(path).convert("L")  # Convert to grayscale
+#         image.save(temp_filename, "JPEG", quality=quality)
+#         temp_image = Image.open(temp_filename).convert("L")  # Ensure temp image is also grayscale
+
+#         ela_image = ImageChops.difference(image, temp_image)
+
+#         extrema = ela_image.getextrema()
+        
+#         # Ensure extrema has the expected format
+#         if not extrema or not isinstance(extrema[0], tuple):
+#             print(f"Unexpected extrema format: {extrema}")
+#             max_diff = 1
+#         else:
+#             max_diff = max([ex[1] for ex in extrema if isinstance(ex, tuple) and len(ex) > 1])
+
+#         if max_diff == 0:
+#             max_diff = 1
+#         scale = 255.0 / max_diff
+
+#         ela_image = ImageEnhance.Brightness(ela_image).enhance(scale)
+
+#         # Cleanup
+#         os.remove(temp_filename)
+
+#         return ela_image
+#     except OSError as e:
+#         print(f"Error processing file {path}: {e}")
+#         return None
 
 
 import tensorflow as tf
