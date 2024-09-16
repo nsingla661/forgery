@@ -120,7 +120,7 @@ from PIL import Image, ImageChops, ImageEnhance
 #     except OSError as e:
 #         print(f"Error processing file {path}: {e}")
 #         return None
-    
+
 
 def convert_to_ela_image(path, quality):
     try:
@@ -139,7 +139,7 @@ def convert_to_ela_image(path, quality):
 
         # Get the extrema for scaling
         extrema = ela_image.getextrema()
-        max_diff = max([ex[1] for ex in extrema if isinstance(ex, tuple)])
+        max_diff = max(extrema)
         if max_diff == 0:
             max_diff = 1
         scale = 255.0 / max_diff
@@ -157,7 +157,8 @@ def convert_to_ela_image(path, quality):
     except OSError as e:
         print(f"Error processing file {path}: {e}")
         return None
-    
+
+
 # def convert_to_ela_image(path, quality):
 #     try:
 #         temp_filename = "temp_file_name.jpg"
@@ -170,7 +171,7 @@ def convert_to_ela_image(path, quality):
 #         ela_image = ImageChops.difference(image, temp_image)
 
 #         extrema = ela_image.getextrema()
-        
+
 #         # Ensure extrema has the expected format
 #         if not extrema or not isinstance(extrema[0], tuple):
 #             print(f"Unexpected extrema format: {extrema}")
@@ -314,7 +315,7 @@ print(len(X_val), len(Y_val))
 
 def build_model():
     base_model = Xception(
-        include_top=False, weights='imagenet', input_shape=(128, 128, 3)
+        include_top=False, weights="imagenet", input_shape=(128, 128, 3)
     )
     # Add custom layers on top of Xception
     model = Sequential()
@@ -322,10 +323,11 @@ def build_model():
     model.add(Flatten())  # Flatten the output of Xception
     model.add(Dense(256, activation="relu"))  # Dense layer
     model.add(Dropout(0.5))  # Dropout for regularization
-    model.add(Dense(2, activation="softmax"))  # Final layer for 2 classes (authentic/forged)
+    model.add(
+        Dense(2, activation="softmax")
+    )  # Final layer for 2 classes (authentic/forged)
 
     return model
-
 
 
 model = build_model()
@@ -346,8 +348,8 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 # Define your initial learning rate
 init_lr = 1e-4
 
-optimizer = Adam(lr = init_lr, decay = init_lr/epochs) 
-model.compile(optimizer = optimizer, loss = 'binary_crossentropy', metrics = ['accuracy'])
+optimizer = Adam(lr=init_lr, decay=init_lr / epochs)
+model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
 
 early_stopping = EarlyStopping(
     monitor="val_accuracy", min_delta=0, patience=5, verbose=0, mode="auto"
