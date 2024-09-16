@@ -70,7 +70,7 @@ def predict_image(image_path):
     predicted_label = np.argmax(predictions, axis=1)
     
     # Return the predicted label
-    return predicted_label[0]
+    return predicted_label
 
 # Example usage
 if __name__ == "__main__":
