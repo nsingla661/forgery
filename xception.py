@@ -92,8 +92,6 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import EarlyStopping
 
 from PIL import Image, ImageChops, ImageEnhance
-
-
 def convert_to_ela_image(path, quality):
     try:
         temp_filename = "temp_file_name.jpg"
@@ -106,7 +104,14 @@ def convert_to_ela_image(path, quality):
         ela_image = ImageChops.difference(image, temp_image)
 
         extrema = ela_image.getextrema()
-        max_diff = max([ex[1] for ex in extrema])
+        
+        # Ensure extrema has the expected format
+        if not extrema or not isinstance(extrema[0], tuple):
+            print(f"Unexpected extrema format: {extrema}")
+            max_diff = 1
+        else:
+            max_diff = max([ex[1] for ex in extrema if isinstance(ex, tuple) and len(ex) > 1])
+
         if max_diff == 0:
             max_diff = 1
         scale = 255.0 / max_diff
