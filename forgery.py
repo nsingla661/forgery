@@ -1,4 +1,5 @@
 import os
+import shutil
 from urllib.parse import unquote, urlparse
 from urllib.request import urlopen
 from urllib.error import HTTPError
@@ -89,54 +90,6 @@ from keras.callbacks import EarlyStopping
 
 from PIL import Image, ImageChops, ImageEnhance
 
-import cv2
-import numpy as np
-
-
-def convert_to_ela_image_cv(path, quality=90):
-    try:
-        temp_filename = "temp_file_name.jpg"
-        ela_filename = "temp_ela.png"
-
-        # Load the original image
-        original = cv2.imread(path)
-        # Save image as JPEG to introduce compression artifacts
-        cv2.imwrite(temp_filename, original, [int(cv2.IMWRITE_JPEG_QUALITY), quality])
-        # Load the compressed image
-        compressed = cv2.imread(temp_filename)
-
-        # Calculate the absolute difference
-        diff = cv2.absdiff(original, compressed)
-
-        # Convert difference image to grayscale
-        diff_gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
-
-        # Normalize the error image
-        max_diff = np.max(diff_gray)
-        if max_diff == 0:
-            max_diff = 1
-        scale = 255.0 / max_diff
-        ela_image = cv2.convertScaleAbs(diff_gray, alpha=scale)
-
-        # Save the result
-        cv2.imwrite(ela_filename, ela_image)
-
-        # Cleanup
-        os.remove(temp_filename)
-
-        return ela_image
-    except Exception as e:
-        print(f"Error processing file {path}: {e}")
-        return None
-
-
-# Example usage:
-ela_image = convert_to_ela_image_cv("path_to_image.png", quality=90)
-if ela_image is not None:
-    cv2.imshow("ELA Image", ela_image)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
 
 def convert_to_ela_image(path, quality):
     try:
@@ -209,7 +162,7 @@ image_size = (128, 128)
 
 
 def prepare_image(image_path, image_size=(128, 128)):
-    ela_image = convert_to_ela_image_cv(image_path, 91)
+    ela_image = convert_to_ela_image(image_path, 91)
     if ela_image is None:
         return None
     return np.array(ela_image.resize(image_size)).flatten() / 255.0
