@@ -321,7 +321,7 @@ from keras import optimizers
 
 model.compile(loss="categorical_crossentropy", optimizer="Nadam", metrics=["accuracy"])
 
-epochs = 15
+epochs = 2
 batch_size = 32
 
 from keras.models import Sequential
@@ -390,4 +390,4 @@ hist = model.fit(
 
 
 print("starting to save the model")
-model.save("model_casia_run2.h5")
+model.save("model_casia_run3.h5")
