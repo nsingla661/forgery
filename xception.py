@@ -368,13 +368,6 @@ early_stopping = EarlyStopping(
 )
 
 
-datagen = ImageDataGenerator(
-    featurewise_center=True,
-    featurewise_std_normalization=True,
-    rotation_range=10,
-    fill_mode="nearest",
-    validation_split=0.2,
-)
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import EarlyStopping
 
@@ -394,14 +387,15 @@ for fold, (train_index, val_index) in enumerate(kf.split(X)):
     # Convert labels to categorical
     Y_train = tf.keras.utils.to_categorical(Y_train, num_classes=2)
     Y_val = tf.keras.utils.to_categorical(Y_val, num_classes=2)
-
+    datagen = ImageDataGenerator(
+        featurewise_center=True,
+        featurewise_std_normalization=True,
+        rotation_range=10,
+        fill_mode="nearest",
+    )
     datagen.fit(X_train)
-    validation_generator = datagen.flow(
-        X_val, Y_val, batch_size=batch_size, subset="validation"
-    )
-    train_generator = datagen.flow(
-        X_train, Y_train, batch_size=batch_size, subset="training"
-    )
+    validation_generator = datagen.flow(X_val, Y_val, batch_size=batch_size)
+    train_generator = datagen.flow(X_train, Y_train, batch_size=batch_size)
     # Ensure correct metric name and mode for early stopping
     early_stopping = EarlyStopping(
         monitor="val_accuracy", min_delta=0, patience=2, verbose=0, mode="auto"
