@@ -100,7 +100,7 @@ def evaluate_model_on_known_authentic_images(model, image_paths):
             count += 1
 
 # Directory containing the images
-au_directory = "license_docs"
+au_directory = "camera_clicked"
 
 # Print the current working directory
 print(f"Current working directory: {os.getcwd()}")
