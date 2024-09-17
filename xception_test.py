@@ -93,6 +93,6 @@ def predict_image(model, image_path, image_size=(128, 128)):
         return "Forged"
 
 # Example usage:
-image_path = 'path_to_your_image.jpg'  # Replace with your image path
+image_path = 'p_camera.jpeg'  # Replace with your image path
 result = predict_image(model, image_path, image_size=(128, 128))
 print(f"The image is predicted to be: {result}")
