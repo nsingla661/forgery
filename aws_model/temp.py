@@ -117,7 +117,7 @@ model.compile(optimizer = optimizer , loss = "categorical_crossentropy", metrics
 epochs = 20
 batch_size = 32
 
-early_stopping = EarlyStopping(monitor='val_loss',
+early_stopping = EarlyStopping(monitor='val_accuracy',
                               min_delta=0,
                               patience=3,
                               verbose=0, mode='auto')
