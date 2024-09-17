@@ -23,7 +23,8 @@ def convert_to_ela_image(path, quality):
         image.save(temp_filename2, "JPEG", quality=quality)
         
         # Open the newly saved image
-        temp_image = Image.open(temp_filename2)
+        temp_filename1 = Image.open(temp_filename2)
+        temp_filename2 = Image.open(temp_filename2)
         
         # Compute the ELA image by finding the difference
         ela_image = ImageChops.difference(temp_filename1, temp_filename2)
