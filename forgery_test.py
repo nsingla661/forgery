@@ -107,7 +107,7 @@ def evaluate_model_on_known_authentic_images(model, image_paths):
 
 
 # Get the list of first 10 images in the 'Au' directory
-au_directory = "data/input/casia-dataset/CASIA2/Au"
+au_directory = "data/input/casia-dataset/CASIA2/tp"
 authentic_image_paths = [
     os.path.join(au_directory, fname) for fname in os.listdir(au_directory)[:1000]
 ]
