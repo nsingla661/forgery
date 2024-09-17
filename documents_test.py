@@ -115,8 +115,10 @@ for file in os.listdir(au_directory):
     print(f"Processing file: {file}")
     predict_and_print(file)
     
-print("\n\n\n")
-
+    
+print(" ");
+print(" ");
+print(" ");
 au_directory = "license_docs"
 
 # Print the current working directory
@@ -126,6 +128,7 @@ print(f"Current working directory: {os.getcwd()}")
 for file in os.listdir(au_directory):
     print(f"Processing file: {file}")
     predict_and_print(file)
+
 
 # Optionally, evaluate the model on known authentic images
 # authentic_image_paths = [os.path.join(au_directory, fname) for fname in os.listdir(au_directory)]
