@@ -64,4 +64,4 @@ def predict_folder(folder_path):
 
 # Run predictions for both folders
 
-predict_folder(data_tp)
+predict_folder(data_au)
