@@ -95,4 +95,48 @@ def predict_image(model, image_path, image_size=(128, 128)):
 # Example usage:
 image_path = 'p_camera.jpeg'  # Replace with your image path
 result = predict_image(model, image_path, image_size=(128, 128))
-print(f"The image is predicted to be: {result}")
+print(f"The image {image_path} is predicted to be: {result}")
+
+
+
+
+# Example usage:
+image_path = 'Drivers-Forged (3) copy.jpg'  # Replace with your image path
+result = predict_image(model, image_path, image_size=(128, 128))
+print(f"The image {image_path} is predicted to be: {result}")
+
+
+# Example usage:
+image_path = 'image (9).png'  # Replace with your image path
+result = predict_image(model, image_path, image_size=(128, 128))
+print(f"The image {image_path} is predicted to be: {result}")
+
+
+# Example usage:
+image_path = 'image (9).png'  # Replace with your image path
+result = predict_image(model, image_path, image_size=(128, 128))
+print(f"The image {image_path} is predicted to be: {result}")
+
+
+# Example usage:
+image_path = 'photo_2024-09-10 13.46.53.jpeg'  # Replace with your image path
+result = predict_image(model, image_path, image_size=(128, 128))
+print(f"The image {image_path} is predicted to be: {result}")
+
+
+# Example usage:
+image_path = 'Robert_Forged.jpg'  # Replace with your image path
+result = predict_image(model, image_path, image_size=(128, 128))
+print(f"The image {image_path} is predicted to be: {result}")
+
+
+# Example usage:
+image_path = 's1.png'  # Replace with your image path
+result = predict_image(model, image_path, image_size=(128, 128))
+print(f"The image {image_path} is predicted to be: {result}")
+
+
+# Example usage:
+image_path = 'Untitled design-2.png'  # Replace with your image path
+result = predict_image(model, image_path, image_size=(128, 128))
+print(f"The image {image_path} is predicted to be: {result}")
