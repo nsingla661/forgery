@@ -4,7 +4,7 @@ from tensorflow.keras.models import load_model
 from PIL import Image, ImageChops, ImageEnhance
 
 # Load the trained model
-model = load_model('/home/ubuntu/forgery/forgery/aws_model/aws_model_4_augmented_casia_1.h5')
+model = load_model('/home/ubuntu/forgery/forgery/aws_model/aws_model_4_augmented_retrained_1.h5')
 
 def convert_to_ela_image(path, quality=90):
     resaved_filename = 'tempresaved.jpg'
@@ -64,12 +64,12 @@ def predict_folder(folder_path):
 
 # Run predictions for both folders
 
-predict_folder(data_tp)
+# predict_folder(data_tp)
 
-# camera_clicked_path = '/home/ubuntu/forgery/forgery/camera_clicked/'
-# license_docs_path = '/home/ubuntu/forgery/forgery/license_docs/'
-# predict_folder(camera_clicked_path)
-# print(" ")
-# print(" ")
-# print(" ")
-# predict_folder(license_docs_path)
+camera_clicked_path = '/home/ubuntu/forgery/forgery/camera_clicked/'
+license_docs_path = '/home/ubuntu/forgery/forgery/license_docs/'
+predict_folder(camera_clicked_path)
+print(" ")
+print(" ")
+print(" ")
+predict_folder(license_docs_path)
