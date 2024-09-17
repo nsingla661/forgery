@@ -102,9 +102,11 @@ def evaluate_model_on_known_authentic_images(model, image_paths):
 
 # Get the list of first 10 images in the 'Au' directory
 au_directory = "license_docs"
-authentic_image_paths = [
-    os.path.join(au_directory, fname) for fname in os.listdir(au_directory)
-]
+for file in os.listdir(au_directory):
+    predict_and_print(file)
+# authentic_image_paths = [
+#     os.path.join(au_directory, fname) for fname in os.listdir(au_directory)
+# ]
 
-evaluate_model_on_known_authentic_images(model, authentic_image_paths)
-print(f"total count of correct indicates are : {count}")
+# evaluate_model_on_known_authentic_images(model, authentic_image_paths)
+# print(f"total count of correct indicates are : {count}")
