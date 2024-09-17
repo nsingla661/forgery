@@ -70,6 +70,8 @@ predict_and_print("p_camera.jpeg")
 
 
 def evaluate_model_on_known_authentic_images(model, image_paths):
+    global count
+    count = 0 
     for image_path in image_paths:
         # Load and prepare the test image
         image = prepare_image(image_path)
@@ -91,7 +93,6 @@ def evaluate_model_on_known_authentic_images(model, image_paths):
 
 # Get the list of first 10 images in the 'Au' directory
 au_directory = "data/input/casia-dataset/CASIA2/Au"
-count = 0
 authentic_image_paths = [
     os.path.join(au_directory, fname) for fname in os.listdir(au_directory)[:1000]
 ]
