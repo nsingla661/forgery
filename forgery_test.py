@@ -7,7 +7,7 @@ from PIL import ImageChops, ImageEnhance
 import os
 
 # Load the pre-trained model
-model = load_model("model_casia_regularised.h5")
+model = load_model("model_casia_run1.h5")
 
 def convert_to_ela_image(path, quality):
     temp_filename = "temp_file_name.jpg"
