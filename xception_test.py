@@ -128,7 +128,7 @@ for image_path in image_paths:
 
     # Make a prediction using the loaded model
     prediction = model.predict(processed_image)
-    
+    print(prediction)
     # Map prediction to class labels
     predicted_class = np.argmax(prediction, axis=1)[0]
     class_labels = {0: "Authentic", 1: "Forged"}
