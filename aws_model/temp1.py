@@ -98,7 +98,7 @@ X = X.reshape(-1, 128, 128, 3)
 X_train, X_val, Y_train, Y_val = train_test_split(X, Y, test_size = 0.2, random_state=5)
 
 # Load the pre-trained model
-model = load_model('aws_model_4_augmented_casia.h5')
+model = load_model('aws_model_4_augmented_casia_1.h5')
 
 # Compile the model
 optimizer = RMSprop(learning_rate=0.0005, rho=0.9, epsilon=1e-08, decay=0.0)
@@ -117,5 +117,5 @@ history = model.fit(
 )
 
 print("Starting to save the retrained model")
-model.save("aws_model_4_augmented_retrained.h5")
+model.save("aws_model_4_augmented_retrained_1.h5")
 print("Model saved successfully")
