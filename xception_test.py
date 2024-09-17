@@ -1,7 +1,39 @@
 import numpy as np
 import tensorflow as tf
+from tensorflow.keras.models import load_model
 from PIL import Image, ImageChops, ImageEnhance
 import os
+
+# Load the pre-trained model (replace with the correct path to your model file)
+model = load_model('model_xception_3.h5')
+
+# Function to convert an image to ELA (Error Level Analysis)
+def convert_to_ela_image(path, quality):
+    try:
+        temp_filename = "temp_file_name.jpg"
+        ela_filename = "temp_ela.png"
+
+        image = Image.open(path).convert("RGB")
+        image.save(temp_filename, "JPEG", quality=quality)
+        temp_image = Image.open(temp_filename)
+
+        ela_image = ImageChops.difference(image, temp_image)
+
+        extrema = ela_image.getextrema()
+        max_diff = max([ex[1] for ex in extrema])
+        if max_diff == 0:
+            max_diff = 1
+        scale = 255.0 / max_diff
+
+        ela_image = ImageEnhance.Brightness(ela_image).enhance(scale)
+
+        # Cleanup
+        os.remove(temp_filename)
+
+        return ela_image
+    except OSError as e:
+        print(f"Error processing file {path}: {e}")
+        return None
 
 # Function to preprocess and prepare the image for prediction
 def preprocess_image_for_prediction(image_path, image_size=(128, 128), quality=91):
@@ -61,6 +93,6 @@ def predict_image(model, image_path, image_size=(128, 128)):
         return "Forged"
 
 # Example usage:
-image_path = 'forgery/p_camera.jpeg'  # Replace with your image path
+image_path = 'path_to_your_image.jpg'  # Replace with your image path
 result = predict_image(model, image_path, image_size=(128, 128))
 print(f"The image is predicted to be: {result}")
