@@ -99,10 +99,10 @@ def evaluate_model_on_known_authentic_images(model, image_paths):
         # print(f'Predicted class for {image_path}: {Y_pred_classes[0]}')
 
 # Get the list of first 10 images in the 'Au' directory
-au_directory = "data/input/casia-dataset/CASIA2/Au"
-authentic_image_paths = [
-    os.path.join(au_directory, fname) for fname in os.listdir(au_directory)
-]
+# au_directory = "data/input/casia-dataset/CASIA2/Au"
+# authentic_image_paths = [
+#     os.path.join(au_directory, fname) for fname in os.listdir(au_directory)
+# ]
 
-evaluate_model_on_known_authentic_images(model, authentic_image_paths)
-print(f"total count of correct indicates are : {count}")
+# evaluate_model_on_known_authentic_images(model, authentic_image_paths)
+# print(f"total count of correct indicates are : {count}")
