@@ -56,20 +56,20 @@ def predict_folder(folder_path):
         if file.endswith(('jpg', 'jpeg', 'png')):
             image_path = os.path.join(folder_path, file)
             class_label = predict_image(image_path)
-            print(class_label)
-            count += (class_label)
-            total += 1
-            # print(f"Image: {file}, Predicted Class: {class_label}")
-    print(f"Predicting for images in folder: {folder_path} , count : {count} , total = {total}")
+            # print(class_label)
+            # count += (class_label)
+            # total += 1
+            print(f"Image: {file}, Predicted Class: {class_label}")
+    # print(f"Predicting for images in folder: {folder_path} , count : {count} , total = {total}")
 
 # Run predictions for both folders
 
-predict_folder(data_au)
+# predict_folder(data_au)
 
-# camera_clicked_path = '/home/ubuntu/forgery/forgery/camera_clicked/'
-# license_docs_path = '/home/ubuntu/forgery/forgery/license_docs/'
-# predict_folder(camera_clicked_path)
-# print(" ")
-# print(" ")
-# print(" ")
-# predict_folder(license_docs_path)
+camera_clicked_path = '/home/ubuntu/forgery/forgery/camera_clicked/'
+license_docs_path = '/home/ubuntu/forgery/forgery/license_docs/'
+predict_folder(camera_clicked_path)
+print(" ")
+print(" ")
+print(" ")
+predict_folder(license_docs_path)
