@@ -67,7 +67,7 @@ images = build_image_list(data_au, '0', images)  # Assuming '0' for authentic
 
 # Shuffle and limit the number of authentic images to 5000
 random.shuffle(images)
-images = images[:5000]
+# images = images[:5000]
 print(f"Total number of images collected authentic: {len(images)}")
 
 
@@ -142,5 +142,5 @@ history = model.fit(
 )
 
 print("Starting to save the model")
-model.save("aws_model_4_augmented_casia.h5")
+model.save("aws_model_4_augmented_casia_1.h5")
 print("Ending after save the model")
