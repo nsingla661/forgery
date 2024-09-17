@@ -10,7 +10,7 @@ import itertools
 from tqdm import tqdm
 
 from tensorflow.keras.utils import to_categorical
-from tensorflow.keras.models import Sequential
+from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPool2D
 from tensorflow.keras.callbacks import ReduceLROnPlateau, EarlyStopping
 from tensorflow.keras.optimizers import RMSprop
