@@ -20,7 +20,7 @@ def convert_to_ela_image(path, quality):
         
         # Save the image with lower quality to create a temporary JPEG
         image.save(temp_filename1, "JPEG", quality=quality)
-        image.save(temp_filename1, "JPEG", quality=quality)
+        image.save(temp_filename2, "JPEG", quality=quality)
         
         # Open the newly saved image
         temp_image = Image.open(temp_filename2)
