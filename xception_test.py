@@ -83,6 +83,7 @@ def predict_image(model, image_path, image_size=(128, 128)):
 
     # Predict the class using the trained model
     prediction = model.predict(processed_image)
+    print(prediction)
     
     # Convert prediction to label (assuming binary classification)
     predicted_label = np.argmax(prediction, axis=1)[0]
