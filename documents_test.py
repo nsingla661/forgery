@@ -22,12 +22,12 @@ def convert_to_ela_image(path, quality):
         image.save(temp_filename1, "JPEG", quality=quality)
         image.save(temp_filename2, "JPEG", quality=quality)
         
-        # Open the newly saved image
-        temp_filename1 = Image.open(temp_filename2)
-        temp_filename2 = Image.open(temp_filename2)
+        # Open the newly saved image (corrected)
+        temp_image1 = Image.open(temp_filename1)
+        temp_image2 = Image.open(temp_filename2)
         
         # Compute the ELA image by finding the difference
-        ela_image = ImageChops.difference(temp_filename1, temp_filename2)
+        ela_image = ImageChops.difference(temp_image1, temp_image2)
         
         # Scale the ELA image
         extrema = ela_image.getextrema()
@@ -115,10 +115,8 @@ for file in os.listdir(au_directory):
     print(f"Processing file: {file}")
     predict_and_print(file)
     
-    
-print(" ");
-print(" ");
-print(" ");
+print("\n\n\n")
+
 au_directory = "license_docs"
 
 # Print the current working directory
@@ -128,7 +126,6 @@ print(f"Current working directory: {os.getcwd()}")
 for file in os.listdir(au_directory):
     print(f"Processing file: {file}")
     predict_and_print(file)
-
 
 # Optionally, evaluate the model on known authentic images
 # authentic_image_paths = [os.path.join(au_directory, fname) for fname in os.listdir(au_directory)]
