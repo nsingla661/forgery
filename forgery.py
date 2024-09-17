@@ -8,6 +8,7 @@ import tarfile
 import sys
 from tempfile import NamedTemporaryFile
 
+
 CHUNK_SIZE = 40960
 DATA_SOURCE_MAPPING = "casia-dataset:https%3A%2F%2Fstorage.googleapis.com%2Fkaggle-data-sets%2F59500%2F115146%2Fbundle%2Farchive.zip%3FX-Goog-Algorithm%3DGOOG4-RSA-SHA256%26X-Goog-Credential%3Dgcp-kaggle-com%2540kaggle-161607.iam.gserviceaccount.com%252F20240911%252Fauto%252Fstorage%252Fgoog4_request%26X-Goog-Date%3D20240911T104634Z%26X-Goog-Expires%3D259200%26X-Goog-SignedHeaders%3Dhost%26X-Goog-Signature%3D67a5d0b3c194195cbd4639829f8330d73edb79354f6876f49ae86c3103d0a4a3e141cbe4f04d7d08419e9f4f7efd5d0b30e6583c7b85282878ab4fc429b5fd6f81e39a4b002ef66d1f7f514078d3fed8cb20ef39bcb4143492b3ca683a5f008923ff2ffe2e2ab887b0532196b6f313dca996fe4d487e8be2ec4ce1b4b2d528a2c2284d198192e08e2e77f7210a4536b25aa5766774eeca238d1f6866acff418c63b54301a61cea59df6f94614bbb65da2f41dea385576d3cae6dbf63267de0e5660d54f8a762ff33c474a0c8aac842a4b778ffb9ac27725050fb9ed3203f20c899afddba265a4528dbcf41d7f51c5d97da7e5bfeb21d0c7b29174a96c30c0d0e"
 TMP_INPUT_PATH = "./data/input"
@@ -96,9 +97,9 @@ def convert_to_ela_image(path, quality):
         temp_filename = "temp_file_name.jpg"
         ela_filename = "temp_ela.png"
 
-        image = Image.open(path).convert("L")  # Convert to grayscale
+        image = Image.open(path).convert("RGB")
         image.save(temp_filename, "JPEG", quality=quality)
-        temp_image = Image.open(temp_filename).convert("L")  # Ensure temp image is also grayscale
+        temp_image = Image.open(temp_filename)
 
         ela_image = ImageChops.difference(image, temp_image)
 
@@ -194,7 +195,7 @@ for dirname, _, filenames in os.walk(path):
                 result = prepare_image(full_path, image_size)
                 if result is not None:
                     X.append(result)
-                    Y.append(1)  # Assuming Y label as 0, adjust as needed
+                    Y.append(0)  # Assuming Y label as 0, adjust as needed
                     if len(Y) % 500 == 0:
                         print(f"Processing {len(Y)} images")
 
@@ -213,12 +214,14 @@ for dirname, _, filenames in os.walk(path):
                 result = prepare_image(full_path, image_size)
                 if result is not None:
                     X.append(result)
-                    Y.append(0)  # Assuming Y label as 0, adjust as needed
+                    Y.append(1)  # Assuming Y label as 1, adjust as needed
                     if len(Y) % 500 == 0:
                         print(f"Processing {len(Y)} images")
 
 print("length of authentic + tempered images")
 print(len(X), len(Y))
+
+from keras import regularizers
 
 import numpy as np
 
@@ -227,6 +230,8 @@ Y = to_categorical(Y, 2)
 X = X.reshape(-1, 128, 128, 3)
 
 from sklearn.model_selection import train_test_split
+from tensorflow.keras import regularizers
+
 
 # Assuming X and Y are already defined
 
@@ -262,6 +267,7 @@ def build_model():
     model.add(Dropout(0.25))
     model.add(Flatten())
     model.add(Dense(256, activation="relu"))
+    Dense(256, activation="relu", kernel_regularizer=regularizers.l2(0.01))
     model.add(Dropout(0.5))
     model.add(Dense(2, activation="softmax"))
     return model
@@ -274,7 +280,7 @@ from keras import optimizers
 
 model.compile(loss="categorical_crossentropy", optimizer="Nadam", metrics=["accuracy"])
 
-epochs = 2
+epochs = 18
 batch_size = 32
 
 from keras.models import Sequential
@@ -343,4 +349,4 @@ hist = model.fit(
 
 
 print("starting to save the model")
-model.save("model_casia_run3.h5")
+model.save("model_casia_regularised.h5")
