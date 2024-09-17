@@ -105,7 +105,7 @@ optimizer = RMSprop(learning_rate=0.0005, rho=0.9, epsilon=1e-08, decay=0.0)
 model.compile(optimizer=optimizer, loss="categorical_crossentropy", metrics=["accuracy"])
 
 # Retrain the model
-epochs = 24
+epochs = 30
 batch_size = 100
 
 early_stopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=5, verbose=0, mode='auto')
