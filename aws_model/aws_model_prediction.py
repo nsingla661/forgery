@@ -9,6 +9,11 @@ model = load_model('/home/ubuntu/forgery/forgery/aws_model/aws_model.h5')
 def convert_to_ela_image(path, quality=90):
     resaved_filename = 'tempresaved.jpg'
     im = Image.open(path)
+    
+    # Convert RGBA to RGB if necessary
+    if im.mode == 'RGBA':
+        im = im.convert('RGB')
+    
     im.save(resaved_filename, 'JPEG', quality=quality)
     resaved_im = Image.open(resaved_filename)
     ela_im = ImageChops.difference(im, resaved_im)
