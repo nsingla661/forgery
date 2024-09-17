@@ -148,9 +148,9 @@ au_folder_path = "/home/ubuntu/forgery/forgery/data/input/casia-dataset/CASIA2/A
 
 # Get the first 5 images from the "Au" folder
 image_files = os.listdir(au_folder_path)
-image_files = [f for f in image_files if f.endswith(('.png', '.jpg', '.jpeg'))][:5]  # Pick 5 images
+image_files = [f for f in image_files if f.endswith(('.png', '.jpg', '.jpeg'))][:500]  # Pick 5 images
 
-
+count = 0
 # Predict on each image
 for image_file in image_files:
     image_path = os.path.join(au_folder_path, image_file)
@@ -164,9 +164,12 @@ for image_file in image_files:
     # Interpret the prediction (Assuming binary classification)
     predicted_label = np.argmax(prediction, axis=1)[0]
     if predicted_label == 0:
+        count += 1
         result = "Authentic"
     else:
         result = "Forged"
     
     # Print the result
     print(f"Prediction for {image_file}: {result}")
+
+print(f"count of au images : {count}")
