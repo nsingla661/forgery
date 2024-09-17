@@ -355,7 +355,7 @@ from keras.optimizers import Adam
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 # Define your initial learning rate
-init_lr = 1e-3
+init_lr = 1e-4
 
 optimizer = Adam(learning_rate=init_lr)
 model.compile(
