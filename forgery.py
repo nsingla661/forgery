@@ -200,8 +200,8 @@ for dirname, _, filenames in os.walk(path):
                         print(f"Processing {len(Y)} images")
 
 random.shuffle(X)
-X = X[:5000]
-Y = Y[:5000]
+X = X[:6000]
+Y = Y[:6000]
 print("length of Authentic images used ")
 print(len(X), len(Y))
 
@@ -235,7 +235,7 @@ from tensorflow.keras import regularizers
 
 # Assuming X and Y are already defined
 
-X_train, X_val, Y_train, Y_val = train_test_split(X, Y, test_size=0.2, random_state=5)
+X_train, X_val, Y_train, Y_val = train_test_split(X, Y, test_size=0.05, random_state=5)
 
 print("training data set : ")
 print(len(X_train), len(Y_train))
@@ -280,7 +280,7 @@ from keras import optimizers
 
 model.compile(loss="categorical_crossentropy", optimizer="Nadam", metrics=["accuracy"])
 
-epochs = 15
+epochs = 12
 batch_size = 32
 
 from keras.models import Sequential
@@ -336,17 +336,17 @@ history = model.fit(
     callbacks=[early_stopping],
 )
 
-model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
+# model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"])
 
-hist = model.fit(
-    X_train,
-    Y_train,
-    batch_size=batch_size,
-    epochs=epochs,
-    validation_data=(X_val, Y_val),
-    callbacks=[early_stopping],
-)
+# hist = model.fit(
+#     X_train,
+#     Y_train,
+#     batch_size=batch_size,
+#     epochs=epochs,
+#     validation_data=(X_val, Y_val),
+#     callbacks=[early_stopping],
+# )
 
 
 print("starting to save the model")
-model.save("model_casia_regularised.h5")
+model.save("model_casia_latest.h5")
