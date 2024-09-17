@@ -119,7 +119,7 @@ batch_size = 100
 
 early_stopping = EarlyStopping(monitor='val_accuracy',
                               min_delta=0,
-                              patience=2,
+                              patience=4,
                               verbose=0, mode='auto')
 
 history = model.fit(X_train, Y_train, batch_size = batch_size, epochs = epochs, 
