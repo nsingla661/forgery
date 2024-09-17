@@ -275,6 +275,8 @@ for dirname, _, filenames in os.walk(path):
                         print(f"Processing {len(Y)} images")
 
 random.shuffle(X)
+X = X[:5000]
+Y = Y[:5000]
 print("length of Authentic images used ")
 print(len(X), len(Y))
 
@@ -344,7 +346,7 @@ def build_model():
 model = build_model()
 model.summary()
 
-epochs = 2
+epochs = 20
 batch_size = 32
 
 from keras.models import Sequential
