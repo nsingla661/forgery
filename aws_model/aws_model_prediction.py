@@ -59,7 +59,7 @@ def predict_folder(folder_path):
             print(class_label)
             count += (class_label)
             total += 1
-            # print(f"Image: {file}, Predicted Class: {class_label}")
+            print(f"Image: {file}, Predicted Class: {class_label}")
     print(f"Predicting for images in folder: {folder_path} , count : {count} , total = {total}")
 
 # Run predictions for both folders
