@@ -141,3 +141,32 @@ print(f"The image {image_path} is predicted to be: {result}")
 image_path = 'Untitled design-2.png'  # Replace with your image path
 result = predict_image(model, image_path, image_size=(128, 128))
 print(f"The image {image_path} is predicted to be: {result}")
+
+print("now au folder images")
+
+au_folder_path = "/home/ubuntu/forgery/forgery/data/input/casia-dataset/CASIA2/Au"
+
+# Get the first 5 images from the "Au" folder
+image_files = os.listdir(au_folder_path)
+image_files = [f for f in image_files if f.endswith(('.png', '.jpg', '.jpeg'))][:5]  # Pick 5 images
+
+
+# Predict on each image
+for image_file in image_files:
+    image_path = os.path.join(au_folder_path, image_file)
+    
+    # Preprocess the image
+    processed_image = preprocess_image_for_prediction(image_path)
+    
+    # Make the prediction
+    prediction = model.predict(processed_image)
+    
+    # Interpret the prediction (Assuming binary classification)
+    predicted_label = np.argmax(prediction, axis=1)[0]
+    if predicted_label == 0:
+        result = "Authentic"
+    else:
+        result = "Forged"
+    
+    # Print the result
+    print(f"Prediction for {image_file}: {result}")
