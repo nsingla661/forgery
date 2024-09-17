@@ -11,21 +11,22 @@ os.chdir("/home/ubuntu/forgery/forgery")
 model = load_model("model_casia_run1.h5")
 
 def convert_to_ela_image(path, quality):
-    temp_filename = "temp_file_name.jpg"
+    temp_filename1 = "temp_file_name1.jpg"
+    temp_filename2 = "temp_file_name2.jpg"
     
     try:
         # Open the original image
         image = Image.open(path).convert("RGB")
         
         # Save the image with lower quality to create a temporary JPEG
-        image.save(temp_filename, "JPEG", quality=quality)
-        image.save(temp_filename, "JPEG", quality=quality)
+        image.save(temp_filename1, "JPEG", quality=quality)
+        image.save(temp_filename1, "JPEG", quality=quality)
         
         # Open the newly saved image
-        temp_image = Image.open(temp_filename)
+        temp_image = Image.open(temp_filename2)
         
         # Compute the ELA image by finding the difference
-        ela_image = ImageChops.difference(image, temp_image)
+        ela_image = ImageChops.difference(temp_filename1, temp_filename2)
         
         # Scale the ELA image
         extrema = ela_image.getextrema()
@@ -43,8 +44,10 @@ def convert_to_ela_image(path, quality):
     
     finally:
         # Cleanup
-        if os.path.exists(temp_filename):
-            os.remove(temp_filename)
+        if os.path.exists(temp_filename1):
+            os.remove(temp_filename1)
+        if os.path.exists(temp_filename2):
+            os.remove(temp_filename2)
 
 def prepare_image(image_path):
     # Convert to ELA image and preprocess the same way as in training
