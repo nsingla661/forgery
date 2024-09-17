@@ -5,7 +5,7 @@ from PIL import Image, ImageChops, ImageEnhance
 import os
 
 # Load the pre-trained model (replace with the correct path to your model file)
-model = load_model('model_xception_3.h5')
+model = load_model('model_xception_4.h5')
 import numpy as np
 from PIL import Image, ImageChops, ImageEnhance
 import os
@@ -54,53 +54,110 @@ def convert_to_ela_image(path, quality):
 
 
 # Example usage:
-# image_path = 'p_camera.jpeg'  # Replace with your image path
+image_path = 'p_camera.jpeg'  # Replace with your image path
 # result = predict_image(model, image_path, image_size=(128, 128))
 # print(f"The image {image_path} is predicted to be: {result}")
 
+processed_image = prepare_image_for_prediction(image_path)
+prediction = model.predict(processed_image)
+print(prediction)
+predicted_class = np.argmax(prediction, axis=1)[0]
+class_labels = {0: "Authentic", 1: "Forged"}
+predicted_label = class_labels[predicted_class]
+print(f"Image: {image_path} | Predicted: {predicted_label}")
 
 
 
 # # Example usage:
-# image_path = 'Drivers-Forged (3) copy.jpg'  # Replace with your image path
+image_path = 'Drivers-Forged (3) copy.jpg'  # Replace with your image path
 # result = predict_image(model, image_path, image_size=(128, 128))
 # print(f"The image {image_path} is predicted to be: {result}")
+processed_image = prepare_image_for_prediction(image_path)
+prediction = model.predict(processed_image)
+print(prediction)
+predicted_class = np.argmax(prediction, axis=1)[0]
+class_labels = {0: "Authentic", 1: "Forged"}
+predicted_label = class_labels[predicted_class]
+print(f"Image: {image_path} | Predicted: {predicted_label}")
 
 
 # # Example usage:
-# image_path = 'image (9).png'  # Replace with your image path
+image_path = 'image (9).png'  # Replace with your image path
 # result = predict_image(model, image_path, image_size=(128, 128))
 # print(f"The image {image_path} is predicted to be: {result}")
+
+processed_image = prepare_image_for_prediction(image_path)
+prediction = model.predict(processed_image)
+print(prediction)
+predicted_class = np.argmax(prediction, axis=1)[0]
+class_labels = {0: "Authentic", 1: "Forged"}
+predicted_label = class_labels[predicted_class]
+print(f"Image: {image_path} | Predicted: {predicted_label}")
+
+# # Example usage:
+image_path = 'image (9).png'  # Replace with your image path
+# result = predict_image(model, image_path, image_size=(128, 128))
+# print(f"The image {image_path} is predicted to be: {result}")
+
+processed_image = prepare_image_for_prediction(image_path)
+prediction = model.predict(processed_image)
+print(prediction)
+predicted_class = np.argmax(prediction, axis=1)[0]
+class_labels = {0: "Authentic", 1: "Forged"}
+predicted_label = class_labels[predicted_class]
+print(f"Image: {image_path} | Predicted: {predicted_label}")
+
+# # Example usage:
+image_path = 'photo_2024-09-10 13.46.53.jpeg'  # Replace with your image path
+# result = predict_image(model, image_path, image_size=(128, 128))
+# print(f"The image {image_path} is predicted to be: {result}")
+
+processed_image = prepare_image_for_prediction(image_path)
+prediction = model.predict(processed_image)
+print(prediction)
+predicted_class = np.argmax(prediction, axis=1)[0]
+class_labels = {0: "Authentic", 1: "Forged"}
+predicted_label = class_labels[predicted_class]
+print(f"Image: {image_path} | Predicted: {predicted_label}")
+
+# # Example usage:
+image_path = 'Robert_Forged.jpg'  # Replace with your image path
+# result = predict_image(model, image_path, image_size=(128, 128))
+# print(f"The image {image_path} is predicted to be: {result}")
+
+processed_image = prepare_image_for_prediction(image_path)
+prediction = model.predict(processed_image)
+print(prediction)
+predicted_class = np.argmax(prediction, axis=1)[0]
+class_labels = {0: "Authentic", 1: "Forged"}
+predicted_label = class_labels[predicted_class]
+print(f"Image: {image_path} | Predicted: {predicted_label}")
 
 
 # # Example usage:
-# image_path = 'image (9).png'  # Replace with your image path
+image_path = 's1.png'  # Replace with your image path
 # result = predict_image(model, image_path, image_size=(128, 128))
 # print(f"The image {image_path} is predicted to be: {result}")
-
+processed_image = prepare_image_for_prediction(image_path)
+prediction = model.predict(processed_image)
+print(prediction)
+predicted_class = np.argmax(prediction, axis=1)[0]
+class_labels = {0: "Authentic", 1: "Forged"}
+predicted_label = class_labels[predicted_class]
+print(f"Image: {image_path} | Predicted: {predicted_label}")
 
 # # Example usage:
-# image_path = 'photo_2024-09-10 13.46.53.jpeg'  # Replace with your image path
+image_path = 'Untitled design-2.png'  # Replace with your image path
 # result = predict_image(model, image_path, image_size=(128, 128))
 # print(f"The image {image_path} is predicted to be: {result}")
 
-
-# # Example usage:
-# image_path = 'Robert_Forged.jpg'  # Replace with your image path
-# result = predict_image(model, image_path, image_size=(128, 128))
-# print(f"The image {image_path} is predicted to be: {result}")
-
-
-# # Example usage:
-# image_path = 's1.png'  # Replace with your image path
-# result = predict_image(model, image_path, image_size=(128, 128))
-# print(f"The image {image_path} is predicted to be: {result}")
-
-
-# # Example usage:
-# image_path = 'Untitled design-2.png'  # Replace with your image path
-# result = predict_image(model, image_path, image_size=(128, 128))
-# print(f"The image {image_path} is predicted to be: {result}")
+processed_image = prepare_image_for_prediction(image_path)
+prediction = model.predict(processed_image)
+print(prediction)
+predicted_class = np.argmax(prediction, axis=1)[0]
+class_labels = {0: "Authentic", 1: "Forged"}
+predicted_label = class_labels[predicted_class]
+print(f"Image: {image_path} | Predicted: {predicted_label}")
 
 print("now au folder images")
 
