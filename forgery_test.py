@@ -3,7 +3,7 @@ import cv2
 from tensorflow.keras.models import load_model
 from tensorflow.keras.utils import to_categorical
 from PIL import Image
-from PIL import Image, ImageChops, ImageEnhance
+from PIL import ImageChops, ImageEnhance
 import os
 
 # Load the pre-trained model
@@ -44,21 +44,23 @@ def convert_to_ela_image(path, quality):
         if os.path.exists(temp_filename):
             os.remove(temp_filename)
 
-
-
 def prepare_image(image_path):
     # Convert to ELA image and preprocess the same way as in training
     ela_image = convert_to_ela_image(image_path, 91)
+    if ela_image is None:
+        print(f"Skipping image {image_path} due to processing error.")
+        return None
     ela_image = ela_image.resize((128, 128))  # Resize to match training
     image_array = np.array(ela_image)
     image_array = image_array / 255.0  # Normalize the image
     return image_array
 
-
 # Function to predict and print the results
 def predict_and_print(image_path):
     # Load and prepare the test image
     image = prepare_image(image_path)
+    if image is None:
+        return
     image = image.reshape(1, 128, 128, 3)  # Add batch dimension
 
     # Predict the values
@@ -73,23 +75,14 @@ def predict_and_print(image_path):
     # Print the predicted class
     print(f"Predicted class for {image_path}: {Y_pred_classes[0]}")
 
-
-# Test the function on different images
-predict_and_print("Drivers-Forged (3) copy.jpg")
-predict_and_print("photo_2024-09-10 13.46.53.jpeg")
-predict_and_print("image (9).png")
-predict_and_print("image (10).png")
-predict_and_print("s1.png")
-predict_and_print("s2.png")
-predict_and_print("p_camera.jpeg")
-
-
 def evaluate_model_on_known_authentic_images(model, image_paths):
     global count
     count = 0
     for image_path in image_paths:
         # Load and prepare the test image
         image = prepare_image(image_path)
+        if image is None:
+            continue
         image = image.reshape(1, 128, 128, 3)  # Add batch dimension
 
         # Predict the values
@@ -101,10 +94,9 @@ def evaluate_model_on_known_authentic_images(model, image_paths):
         # Convert predictions to class labels
         Y_pred_classes = np.argmax(Y_pred, axis=1)
         if Y_pred_classes == 1:
-            count = count + 1
+            count += 1
         # Print the predicted class
         # print(f'Predicted class for {image_path}: {Y_pred_classes[0]}')
-
 
 # Get the list of first 10 images in the 'Au' directory
 au_directory = "data/input/casia-dataset/CASIA2/Tp"
