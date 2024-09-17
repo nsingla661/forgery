@@ -327,6 +327,8 @@ def build_model():
     base_model = Xception(
         include_top=False, weights="imagenet", input_shape=(128, 128, 3)
     )
+    for layer in base_model.layers[-30:]:
+        layer.trainable = True
 
     # Build the model
     model = Sequential()
@@ -463,4 +465,4 @@ history = model.fit(
 
 
 print("starting to save the model")
-model.save("model_xception_4.h5")
+model.save("model_xception_5.h5")
