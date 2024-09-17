@@ -56,11 +56,11 @@ def predict_folder(folder_path):
         if file.endswith(('jpg', 'jpeg', 'png')):
             image_path = os.path.join(folder_path, file)
             class_label = predict_image(image_path)
-            count += class_label
+            count += (1-class_label)
             total += 1
             # print(f"Image: {file}, Predicted Class: {class_label}")
     print(f"Predicting for images in folder: {folder_path} , count : {count} , total = {total}")
 
 # Run predictions for both folders
 
-predict_folder(data_tp)
+predict_folder(data_au)
