@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 import itertools
 from tqdm import tqdm
+import random
 
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.models import Sequential, load_model
@@ -61,8 +62,15 @@ data_tp = '/home/ubuntu/forgery/forgery/data/input/casia-dataset/CASIA2/Tp'
 # Build dataset for CASIA
 images = []
 print(f"Total number of images collected initially: {len(images)}")
+
 images = build_image_list(data_au, '0', images)  # Assuming '0' for authentic
+
+# Shuffle and limit the number of authentic images to 5000
+random.shuffle(images)
+images = images[:5000]
 print(f"Total number of images collected authentic: {len(images)}")
+
+
 images = build_image_list(data_tp, '1', images)  # Assuming '1' for tampered
 print(f"Total number of images collected total: {len(images)}")
 
