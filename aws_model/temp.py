@@ -9,11 +9,12 @@ from sklearn.metrics import confusion_matrix
 import itertools
 from tqdm import tqdm
 
-from keras.utils.np_utils import to_categorical
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPool2D
-from keras.callbacks import ReduceLROnPlateau, EarlyStopping
+from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPool2D
+from tensorflow.keras.callbacks import ReduceLROnPlateau, EarlyStopping
 from tensorflow.keras.optimizers import RMSprop
+
 
 from PIL import Image
 from pylab import *
