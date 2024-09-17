@@ -346,7 +346,7 @@ def build_model():
 model = build_model()
 model.summary()
 
-epochs = 20
+epochs = 18
 batch_size = 32
 
 from keras.models import Sequential
