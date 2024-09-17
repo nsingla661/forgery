@@ -275,8 +275,6 @@ for dirname, _, filenames in os.walk(path):
                         print(f"Processing {len(Y)} images")
 
 random.shuffle(X)
-X = X[:4000]
-Y = Y[:4000]
 print("length of Authentic images used ")
 print(len(X), len(Y))
 
@@ -306,7 +304,7 @@ from sklearn.model_selection import train_test_split
 
 # Assuming X and Y are already defined
 
-X_train, X_val, Y_train, Y_val = train_test_split(X, Y, test_size=0.05, random_state=5)
+X_train, X_val, Y_train, Y_val = train_test_split(X, Y, test_size=0.2, random_state=5)
 
 print("training data set : ")
 print(len(X_train), len(Y_train))
@@ -346,7 +344,7 @@ def build_model():
 model = build_model()
 model.summary()
 
-epochs = 8
+epochs = 2
 batch_size = 32
 
 from keras.models import Sequential
@@ -355,15 +353,15 @@ from keras.optimizers import Adam
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 # Define your initial learning rate
-init_lr = 1e-4
+init_lr = 1e-3
 
 optimizer = Adam(learning_rate=init_lr)
 model.compile(
-    optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy"]
+    optimizer=optimizer, loss="categorical_crossentropy", metrics=["accuracy"]
 )
 
 early_stopping = EarlyStopping(
-    monitor="val_accuracy", min_delta=0, patience=2, verbose=0, mode="auto"
+    monitor="val_loss", min_delta=0, patience=10, verbose=0, mode="auto"
 )
 
 
@@ -389,23 +387,29 @@ datagen = ImageDataGenerator(
     featurewise_std_normalization=True,
     rotation_range=10,
     fill_mode="nearest",
-    validation_split=0.2,
 )
+
+datagen_val = ImageDataGenerator(
+    featurewise_center=True,
+    featurewise_std_normalization=True
+)
+
 datagen.fit(X_train)
 
-validation_generator = datagen.flow(
-    x_train2, y_train2, batch_size=32, subset="validation"
-)
-train_generator = datagen.flow(x_train2, y_train2, batch_size=32, subset="training")
+# validation_generator = datagen.flow(
+#     x_train2, y_train2, batch_size=32, subset="validation"
+# )
+train_generator = datagen.flow(x_train2, y_train2, batch_size=32)
+val_generator = datagen_val.flow(X_val, Y_val, batch_size=32)
 
 # Ensure correct metric name and mode for early stopping
 early_stopping = EarlyStopping(
-    monitor="val_accuracy", min_delta=0, patience=5, verbose=0, mode="auto"
+    monitor="val_loss", min_delta=0, patience=10, verbose=0, mode="auto"
 )
 history = model.fit(
     train_generator,
     epochs=epochs,
-    validation_data=validation_generator,
+    validation_data=val_generator,
     verbose=1,
     callbacks=[early_stopping],
 )
@@ -457,4 +461,4 @@ history = model.fit(
 
 
 print("starting to save the model")
-model.save("model_xception_3.h5")
+model.save("model_xception_4.h5")
