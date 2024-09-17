@@ -158,37 +158,3 @@ predicted_class = np.argmax(prediction, axis=1)[0]
 class_labels = {0: "Authentic", 1: "Forged"}
 predicted_label = class_labels[predicted_class]
 print(f"Image: {image_path} | Predicted: {predicted_label}")
-
-print("now au folder images")
-
-au_image_folder = "/home/ubuntu/forgery/forgery/data/input/casia-dataset/CASIA2/Au"
-
-# Get the first 5 images from the "Au" folder
-# image_files = os.listdir(au_folder_path)
-# image_files = [f for f in image_files if f.endswith(('.png', '.jpg', '.jpeg'))][:500]  # Pick 5 images
-
-count = 0
-
-
-# Get a list of 5 sample images from the folder
-image_paths = [os.path.join(au_image_folder, image_name) 
-               for image_name in os.listdir(au_image_folder)[:5]]
-
-# Iterate over the sample images, preprocess, and predict
-for image_path in image_paths:
-    # Preprocess the image for prediction
-    processed_image = prepare_image_for_prediction(image_path)
-    
-    if processed_image is None:
-        print(f"Skipping {image_path} due to preprocessing error.")
-        continue
-
-    # Make a prediction using the loaded model
-    prediction = model.predict(processed_image)
-    print(prediction)
-    # Map prediction to class labels
-    predicted_class = np.argmax(prediction, axis=1)[0]
-    class_labels = {0: "Authentic", 1: "Forged"}
-    predicted_label = class_labels[predicted_class]
-
-    print(f"Image: {image_path} | Predicted: {predicted_label}")
