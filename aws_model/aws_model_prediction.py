@@ -38,6 +38,7 @@ def predict_image(image_path):
     
     # Predict using the model
     prediction = model.predict(processed_image)
+    print(prediction)
     class_label = np.argmax(prediction, axis=1)
     
     return class_label[0]
