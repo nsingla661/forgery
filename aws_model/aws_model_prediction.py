@@ -52,10 +52,11 @@ data_tp = '/home/ubuntu/forgery/forgery/data/input/casia-dataset/CASIA2/Tp'
 def predict_folder(folder_path):
     count = 0 
     total = 0
-    for file in os.listdir(folder_path):
+    for file in os.listdir(folder_path)[:10] :
         if file.endswith(('jpg', 'jpeg', 'png')):
             image_path = os.path.join(folder_path, file)
             class_label = predict_image(image_path)
+            print(class_label)
             count += (1-class_label)
             total += 1
             # print(f"Image: {file}, Predicted Class: {class_label}")
