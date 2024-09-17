@@ -60,8 +60,11 @@ data_tp = '/home/ubuntu/forgery/forgery/data/input/casia-dataset/CASIA2/Tp'
 
 # Build dataset for CASIA
 images = []
+print(f"Total number of images collected initially: {len(images)}")
 images = build_image_list(data_au, '0', images)  # Assuming '0' for authentic
+print(f"Total number of images collected authentic: {len(images)}")
 images = build_image_list(data_tp, '1', images)  # Assuming '1' for tampered
+print(f"Total number of images collected total: {len(images)}")
 
 image_name = []
 label = []
@@ -95,6 +98,9 @@ X = X.reshape(-1, 128, 128, 3)
 
 X_train, X_val, Y_train, Y_val = train_test_split(X, Y, test_size=0.2, random_state=5)
 
+# Check the shape of training and validation data
+print(f"Number of training samples: {X_train.shape[0]}")
+print(f"Number of validation samples: {X_val.shape[0]}")
 # Data Augmentation
 datagen = ImageDataGenerator(
     rotation_range=20,
