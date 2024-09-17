@@ -111,15 +111,15 @@ model.add(Dense(2, activation = "softmax"))
 
 model.summary()
 
-optimizer = RMSprop(learning_rate=0.001, rho=0.9, epsilon=1e-08, decay=0.0)
+optimizer = RMSprop(learning_rate=0.0005, rho=0.9, epsilon=1e-08, decay=0.0)
 model.compile(optimizer = optimizer , loss = "categorical_crossentropy", metrics=["accuracy"])
 
 epochs = 20
-batch_size = 32
+batch_size = 100
 
 early_stopping = EarlyStopping(monitor='val_loss',
                               min_delta=0,
-                              patience=2,
+                              patience=5,
                               verbose=0, mode='auto')
 
 history = model.fit(X_train, Y_train, batch_size = batch_size, epochs = epochs, 
@@ -127,6 +127,5 @@ history = model.fit(X_train, Y_train, batch_size = batch_size, epochs = epochs,
 
 
 print("starting to save the model")
-model.save("aws_model_1.h5")
+model.save("aws_model_4.h5")
 print("ending after save the model")
-
