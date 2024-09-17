@@ -4,7 +4,7 @@ from tensorflow.keras.models import load_model
 from PIL import Image, ImageChops, ImageEnhance
 
 # Load the trained model
-model = load_model('/home/ubuntu/forgery/forgery/aws_model/aws_model_4_augmented.h5')
+model = load_model('/home/ubuntu/forgery/forgery/aws_model/aws_model_4.h5')
 
 def convert_to_ela_image(path, quality=90):
     resaved_filename = 'tempresaved.jpg'
