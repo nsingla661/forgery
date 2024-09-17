@@ -93,13 +93,13 @@ def evaluate_model_on_known_authentic_images(model, image_paths):
 
         # Convert predictions to class labels
         Y_pred_classes = np.argmax(Y_pred, axis=1)
-        if Y_pred_classes == 1:
+        if Y_pred_classes == 0:
             count += 1
         # Print the predicted class
         # print(f'Predicted class for {image_path}: {Y_pred_classes[0]}')
 
 # Get the list of first 10 images in the 'Au' directory
-au_directory = "data/input/casia-dataset/CASIA2/Tp"
+au_directory = "data/input/casia-dataset/CASIA2/Au"
 authentic_image_paths = [
     os.path.join(au_directory, fname) for fname in os.listdir(au_directory)
 ]
