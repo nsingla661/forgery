@@ -76,9 +76,11 @@ images = []
 images = build_image_list(custom_path_original, '0', images)
 images = build_image_list(custom_path_tampered, '1', images)
 
-temp1 = build_image_list(data_au, '0', images)  # Assuming '0' for authentic 
+temp1 = []
+temp2 = []
+temp1 = build_image_list(data_au, '0', temp1)  # Assuming '0' for authentic 
 random.shuffle(temp1)
-temp2 = build_image_list(data_tp, '1', images)  # Assuming '1' for tampered
+temp2 = build_image_list(data_tp, '1', temp2)  # Assuming '1' for tampered
 random.shuffle(temp2)
 
 images.extend(temp1[:200])
