@@ -7,7 +7,7 @@ from PIL import Image, ImageChops, ImageEnhance
 model = load_model('/home/ubuntu/forgery/forgery/aws_model/aws_model_6_CASIA.h5')
 
 
-def convert_to_ela_image(path, quality=90):
+def convert_to_ela_image(path, quality=80):
     resaved_filename = 'tempresaved.jpg'
     im = Image.open(path)
     
