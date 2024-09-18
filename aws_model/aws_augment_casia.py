@@ -153,7 +153,7 @@ epochs = 24
 batch_size = 32
 
 init_lr = 1e-4
-optimizer = Adam(lr = init_lr)
+optimizer = Adam(learning_rate = init_lr)
 
 early_stopping = EarlyStopping(monitor='val_accuracy', min_delta=0, patience=2, verbose=0, mode='auto')
 
