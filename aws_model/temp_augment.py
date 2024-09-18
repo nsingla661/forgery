@@ -140,7 +140,7 @@ early_stopping = EarlyStopping(monitor='val_loss',
                               patience=3,
                               verbose=0, mode='auto')
 
-history = model.fit(datagen.flow(X_train, Y_train, batch_size=batch_size),
+history = model.fit(X_train, Y_train, batch_size=batch_size,
                     validation_data=(X_val, Y_val),
                     epochs=epochs, verbose=2, callbacks=[early_stopping])
 
