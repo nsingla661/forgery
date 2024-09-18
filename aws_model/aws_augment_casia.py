@@ -14,7 +14,7 @@ from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPool2D
 from tensorflow.keras.callbacks import ReduceLROnPlateau, EarlyStopping
-from tensorflow.keras.optimizers import RMSprop
+from tensorflow.keras.optimizers import RMSprop, Adam
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from PIL import Image
@@ -92,7 +92,7 @@ X = []
 Y = []
 for index, row in dataset.iterrows():
     try:
-        ela_image = convert_to_ela_image(row['image'], 90)
+        ela_image = convert_to_ela_image(row['image'], 80)
         if ela_image:
             X.append(np.array(ela_image.resize((128, 128))).flatten() / 255.0)
             Y.append(int(row['class_label']))
