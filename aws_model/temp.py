@@ -87,7 +87,7 @@ random.shuffle(temp2)
 images.extend(temp1[:200])
 images.extend(temp2[:200])
 
-
+print(f"the length of images dataset is : {len(images)}")
 image_name = []
 label = []
 for i in tqdm(range(len(images))):
