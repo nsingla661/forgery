@@ -123,7 +123,23 @@ datagen = ImageDataGenerator(
 datagen.fit(X_train)
 
 # Load the pre-trained model
-model = load_model('/home/ubuntu/forgery/forgery/aws_model/aws_model_4_augmented.h5')
+# model = load_model('/home/ubuntu/forgery/forgery/aws_model/aws_model_4_augmented.h5')
+
+model = Sequential()
+
+model.add(Conv2D(filters = 32, kernel_size = (3,3),padding = 'valid', 
+                 activation ='relu', input_shape = (128,128,3)))
+model.add(Conv2D(filters = 32, kernel_size = (3,3),padding = 'valid', 
+                 activation ='relu'))
+model.add(MaxPool2D(pool_size=(2,2)))
+model.add(Dropout(0.25))
+model.add(Flatten())
+model.add(Dense(256, activation = "relu"))
+model.add(Dropout(0.5))
+model.add(Dense(2, activation = "softmax"))
+
+model.summary()
+
 
 # Compile the model
 optimizer = RMSprop(learning_rate=0.0005, rho=0.9, epsilon=1e-08, decay=0.0)
@@ -142,5 +158,5 @@ history = model.fit(
 )
 
 print("Starting to save the model")
-model.save("aws_model_4_augmented_casia_1.h5")
+model.save("aws_model_4_casia.h5")
 print("Ending after save the model")
