@@ -126,7 +126,7 @@ datagen.fit(X_train)
 # model.summary()
 
 # Load the pre-trained model
-model = load_model('aws_model_4_casia.h5')
+model = load_model('aws_model_4_casia_1.h5')
 
 
 optimizer = RMSprop(learning_rate=0.0005, rho=0.9, epsilon=1e-08, decay=0.0)
@@ -137,7 +137,7 @@ batch_size = 100
 
 early_stopping = EarlyStopping(monitor='val_loss',
                               min_delta=0,
-                              patience=3,
+                              patience=2,
                               verbose=0, mode='auto')
 
 history = model.fit(datagen.flow(X_train, Y_train, batch_size=batch_size),
@@ -145,5 +145,5 @@ history = model.fit(datagen.flow(X_train, Y_train, batch_size=batch_size),
                     epochs=epochs, verbose=2, callbacks=[early_stopping])
 
 print("starting to save the model")
-model.save("aws_model_4_casia_augmented_1.h5")
+model.save("aws_model_4_casia__1_augmented.h5")
 print("ending after save the model")
