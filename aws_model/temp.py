@@ -75,6 +75,8 @@ training_data_set = 'dataset.csv'
 images = []
 images = build_image_list(custom_path_original, '0', images)
 images = build_image_list(custom_path_tampered, '1', images)
+
+print(f"the length of images dataset is : {len(images)}")
 import random
 
 temp1 = []
