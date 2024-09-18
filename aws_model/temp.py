@@ -85,6 +85,10 @@ random.shuffle(temp1)
 temp2 = build_image_list(data_tp, '1', temp2)  # Assuming '1' for tampered
 random.shuffle(temp2)
 
+
+print(f"the length of temp1 dataset is : {len(temp1)}")
+print(f"the length of temp2 dataset is : {len(temp2)}")
+
 images.extend(temp1[:200])
 images.extend(temp2[:200])
 
