@@ -66,12 +66,23 @@ def build_image_list(path_to_image, label, images):
 
 custom_path_original = 'images/training/original/'
 custom_path_tampered = 'images/training/forged/'
+data_au = '/home/ubuntu/forgery/forgery/data/input/casia-dataset/CASIA2/Au'
+data_tp = '/home/ubuntu/forgery/forgery/data/input/casia-dataset/CASIA2/Tp'
 
 training_data_set = 'dataset.csv'
 
 images = []
 images = build_image_list(custom_path_original, '0', images)
 images = build_image_list(custom_path_tampered, '1', images)
+
+temp1 = build_image_list(data_au, '0', images)  # Assuming '0' for authentic 
+random.shuffle(temp1)
+temp2 = build_image_list(data_tp, '1', images)  # Assuming '1' for tampered
+random.shuffle(temp2)
+
+images.extend(temp1[:200])
+images.extend(temp2[:200])
+
 
 image_name = []
 label = []
@@ -127,5 +138,5 @@ history = model.fit(X_train, Y_train, batch_size = batch_size, epochs = epochs,
 
 
 print("starting to save the model")
-model.save("aws_model_6.h5")
+model.save("aws_model_7.h5")
 print("ending after save the model")
