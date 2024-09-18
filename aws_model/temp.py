@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 import itertools
 from tqdm import tqdm
-import random
+# import random
 
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.models import Sequential
@@ -75,6 +75,7 @@ training_data_set = 'dataset.csv'
 images = []
 images = build_image_list(custom_path_original, '0', images)
 images = build_image_list(custom_path_tampered, '1', images)
+import random
 
 temp1 = []
 temp2 = []
