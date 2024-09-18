@@ -64,7 +64,7 @@ def predict_folder(folder_path):
 
 # Run predictions for both folders
 
-predict_folder(data_au)
+predict_folder(data_tp)
 
 # camera_clicked_path = '/home/ubuntu/forgery/forgery/camera_clicked/'
 # license_docs_path = '/home/ubuntu/forgery/forgery/license_docs/'
