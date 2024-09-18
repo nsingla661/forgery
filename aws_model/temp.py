@@ -117,9 +117,9 @@ model.compile(optimizer = optimizer , loss = "categorical_crossentropy", metrics
 epochs = 20
 batch_size = 100
 
-early_stopping = EarlyStopping(monitor='val_loss',
+early_stopping = EarlyStopping(monitor='val_accuracy',
                               min_delta=0,
-                              patience=5,
+                              patience=2,
                               verbose=0, mode='auto')
 
 history = model.fit(X_train, Y_train, batch_size = batch_size, epochs = epochs, 
@@ -127,5 +127,5 @@ history = model.fit(X_train, Y_train, batch_size = batch_size, epochs = epochs,
 
 
 print("starting to save the model")
-model.save("aws_model_4.h5")
+model.save("aws_model_5.h5")
 print("ending after save the model")
