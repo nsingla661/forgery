@@ -123,40 +123,46 @@ datagen = ImageDataGenerator(
 datagen.fit(X_train)
 
 # Load the pre-trained model
-# model = load_model('/home/ubuntu/forgery/forgery/aws_model/aws_model_4_augmented.h5')
+model = load_model('/home/ubuntu/forgery/forgery/aws_model/aws_model_6.h5')
 
-model = Sequential()
+# model = Sequential()
 
-model.add(Conv2D(filters = 32, kernel_size = (3,3),padding = 'valid', 
-                 activation ='relu', input_shape = (128,128,3)))
-model.add(Conv2D(filters = 32, kernel_size = (3,3),padding = 'valid', 
-                 activation ='relu'))
-model.add(MaxPool2D(pool_size=(2,2)))
-model.add(Dropout(0.25))
-model.add(Flatten())
-model.add(Dense(256, activation = "relu"))
-model.add(Dropout(0.5))
-model.add(Dense(2, activation = "softmax"))
+# model.add(Conv2D(filters = 32, kernel_size = (3,3),padding = 'valid', 
+#                  activation ='relu', input_shape = (128,128,3)))
+# model.add(Conv2D(filters = 32, kernel_size = (3,3),padding = 'valid', 
+#                  activation ='relu'))
+# model.add(MaxPool2D(pool_size=(2,2)))
+# model.add(Dropout(0.25))
+# model.add(Flatten())
+# model.add(Dense(256, activation = "relu"))
+# model.add(Dropout(0.5))
+# model.add(Dense(2, activation = "softmax"))
 
-model.summary()
+# model.summary()
 
 
 # Compile the model
-optimizer = RMSprop(learning_rate=0.0005, rho=0.9, epsilon=1e-08, decay=0.0)
-model.compile(optimizer=optimizer, loss="categorical_crossentropy", metrics=["accuracy"])
+# optimizer = RMSprop(learning_rate=0.0005, rho=0.9, epsilon=1e-08, decay=0.0)
+# model.compile(optimizer=optimizer, loss="categorical_crossentropy", metrics=["accuracy"])
+
+from keras import optimizers
+model.compile(loss='categorical_crossentropy', optimizer='Nadam', metrics=['accuracy'])
 
 # Train the model
-epochs = 13
-batch_size = 100
+epochs = 24
+batch_size = 32
+
+init_lr = 1e-4
+optimizer = Adam(lr = init_lr)
 
 early_stopping = EarlyStopping(monitor='val_accuracy', min_delta=0, patience=2, verbose=0, mode='auto')
 
 history = model.fit(
-    datagen.flow(X_train, Y_train, batch_size=batch_size),
+    X_train, Y_train, batch_size=batch_size,
     validation_data=(X_val, Y_val),
-    epochs=epochs, verbose=2, callbacks=[early_stopping]
+    epochs=epochs, verbose=1, callbacks=[early_stopping]
 )
 
 print("Starting to save the model")
-model.save("aws_model_4_casia_1.h5")
+model.save("aws_model_6_CASIA.h5")
 print("Ending after save the model")
