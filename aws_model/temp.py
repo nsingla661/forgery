@@ -86,7 +86,7 @@ dataset = pd.read_csv('dataset.csv')
 X = []
 Y = []
 for index, row in dataset.iterrows():
-    X.append(array(convert_to_ela_image(row[0], 90).resize((128, 128))).flatten() / 255.0)
+    X.append(array(convert_to_ela_image(row[0], 80).resize((128, 128))).flatten() / 255.0)
     Y.append(row[1])
 X = np.array(X)
 Y = to_categorical(Y, 2)
@@ -127,5 +127,5 @@ history = model.fit(X_train, Y_train, batch_size = batch_size, epochs = epochs,
 
 
 print("starting to save the model")
-model.save("aws_model_5.h5")
+model.save("aws_model_6.h5")
 print("ending after save the model")
