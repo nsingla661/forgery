@@ -132,7 +132,7 @@ model = load_model('aws_model_4_casia.h5')
 optimizer = RMSprop(learning_rate=0.0005, rho=0.9, epsilon=1e-08, decay=0.0)
 model.compile(optimizer = optimizer , loss = "categorical_crossentropy", metrics=["accuracy"])
 
-epochs = 14
+epochs = 12
 batch_size = 100
 
 early_stopping = EarlyStopping(monitor='val_loss',
