@@ -56,14 +56,12 @@ def convert_to_ela_image(path, quality):
 def build_image_list(path_to_image, label, images):
     for file in tqdm(os.listdir(path_to_image)):
         try:
-            if file.endswith('jpg') or file.endswith('JPG') or file.endswith('jpeg') or file.endswith('JPEG'):
-                if int(os.stat(path_to_image + file).st_size) > 10000:
-                    line = path_to_image + file  + ',' + label + '\n'
-                    images.append(line)
-        except:
-            print(path_to_image + file)
+            if file.lower().endswith(('jpg', 'jpeg', 'png', 'tif')):
+                if int(os.stat(os.path.join(path_to_image, file)).st_size) > 10000:
+                    images.append(os.path.join(path_to_image, file) + ',' + label + '\n')
+        except Exception as e:
+            print(f"Error processing file {file}: {e}")
     return images
-    
 
 custom_path_original = 'images/training/original/'
 custom_path_tampered = 'images/training/forged/'
