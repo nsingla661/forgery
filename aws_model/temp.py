@@ -75,8 +75,7 @@ training_data_set = 'dataset.csv'
 images = []
 images = build_image_list(custom_path_original, '0', images)
 images = build_image_list(custom_path_tampered, '1', images)
-
-print(f"the length of images dataset is : {len(images)}")
+count_len = len(images)
 import random
 
 temp1 = []
@@ -89,6 +88,7 @@ random.shuffle(temp2)
 images.extend(temp1[:200])
 images.extend(temp2[:200])
 
+print(f"the length of images dataset is : {count_len}")
 print(f"the length of images dataset is : {len(images)}")
 image_name = []
 label = []
